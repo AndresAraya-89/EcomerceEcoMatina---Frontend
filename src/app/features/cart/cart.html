@@ -1,0 +1,120 @@
+<section class="max-w-max-width mx-auto w-full px-margin-mobile md:px-margin-desktop py-lg">
+  <h1 class="font-headline-md text-headline-md font-bold text-on-surface mb-lg">
+    Tu carrito
+  </h1>
+
+  <!-- Avisos del backend (stock/precio ajustados) -->
+  @if (advertencias().length > 0) {
+    <div class="mb-md rounded-lg border border-outline-variant bg-surface-container-low p-md">
+      <ul class="list-disc pl-5 text-label-md text-secondary">
+        @for (aviso of advertencias(); track aviso) {
+          <li>{{ aviso }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  <!-- Error de red / backend -->
+  @if (error(); as msg) {
+    <div class="mb-md rounded-lg border border-error bg-error-container p-md text-on-error-container">
+      {{ msg }}
+    </div>
+  }
+
+  @if (vacio()) {
+    <div class="flex flex-col items-center justify-center gap-md py-2xl text-center">
+      <span class="material-symbols-outlined text-6xl text-outline">shopping_cart</span>
+      <p class="font-body-lg text-secondary">Tu carrito esta vacio.</p>
+      <a
+        routerLink="/inicio"
+        class="rounded-full bg-primary px-6 py-2 font-label-lg text-on-primary hover:opacity-90 transition"
+      >
+        Seguir comprando
+      </a>
+    </div>
+  } @else {
+    <div class="grid gap-lg lg:grid-cols-[1fr_320px]">
+      <!-- Lista de items -->
+      <ul class="flex flex-col gap-md">
+        @for (item of items(); track item.codigo_producto) {
+          <li
+            class="flex items-center gap-md rounded-lg border border-outline-variant bg-surface p-md"
+          >
+            <div class="flex-1">
+              <p class="font-label-lg text-on-surface">{{ item.nombre }}</p>
+              <p class="text-label-md text-secondary">
+                {{ item.precio_unitario | currency: 'CRC' : 'symbol-narrow' }} c/u
+              </p>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                (click)="cambiarCantidad(item, item.cantidad - 1)"
+                class="grid h-8 w-8 place-items-center rounded-full border border-outline text-on-surface hover:bg-surface-container-low"
+                aria-label="Disminuir cantidad"
+              >
+                &minus;
+              </button>
+              <span class="w-8 text-center font-label-lg">{{ item.cantidad }}</span>
+              <button
+                type="button"
+                (click)="cambiarCantidad(item, item.cantidad + 1)"
+                class="grid h-8 w-8 place-items-center rounded-full border border-outline text-on-surface hover:bg-surface-container-low"
+                aria-label="Aumentar cantidad"
+              >
+                +
+              </button>
+            </div>
+
+            <p class="w-28 text-right font-label-lg text-on-surface">
+              {{ item.subtotal | currency: 'CRC' : 'symbol-narrow' }}
+            </p>
+
+            <button
+              type="button"
+              (click)="eliminar(item)"
+              class="grid h-9 w-9 place-items-center rounded-full text-error hover:bg-error-container"
+              aria-label="Eliminar producto"
+            >
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </li>
+        }
+      </ul>
+
+      <!-- Resumen -->
+      <aside class="h-fit rounded-lg border border-outline-variant bg-surface-container-low p-lg">
+        <h2 class="mb-md font-title-lg text-title-lg text-on-surface">Resumen</h2>
+        <div class="flex items-center justify-between font-body-lg">
+          <span class="text-secondary">Total</span>
+          <span class="font-bold text-on-surface">
+            @if (cargando()) {
+              Calculando...
+            } @else {
+              {{ total() | currency: 'CRC' : 'symbol-narrow' }}
+            }
+          </span>
+        </div>
+        <p class="mt-2 text-label-sm text-secondary">
+          Total verificado con el inventario actual.
+        </p>
+
+        <button
+          type="button"
+          class="mt-lg w-full rounded-full bg-primary px-6 py-3 font-label-lg text-on-primary hover:opacity-90 transition disabled:opacity-50"
+          [disabled]="cargando()"
+        >
+          Proceder al pago
+        </button>
+        <button
+          type="button"
+          (click)="vaciar()"
+          class="mt-2 w-full rounded-full px-6 py-2 font-label-md text-secondary hover:bg-surface-container"
+        >
+          Vaciar carrito
+        </button>
+      </aside>
+    </div>
+  }
+</section>

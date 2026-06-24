@@ -1,0 +1,95 @@
+<header
+  class="bg-surface dark:bg-on-surface w-full sticky top-0 z-50 border-b border-outline-variant dark:border-outline shadow-sm dark:shadow-none"
+>
+  <div
+    class="flex items-center justify-between px-margin-mobile md:px-margin-desktop py-sm max-w-max-width mx-auto w-full"
+  >
+    <!-- Brand -->
+    <a
+      class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed flex items-center gap-2"
+      href="#"
+    >
+      <span
+        class="material-symbols-outlined filled"
+        data-icon="agriculture"
+        style="font-variation-settings: 'FILL' 1"
+        >agriculture</span
+      >
+      Agromatina
+    </a>
+    <nav class="hidden md:flex items-center gap-lg">
+      <a
+        routerLink="/herramientas"
+        routerLinkActive="!text-primary !dark:text-primary-fixed !border-b-2 !border-primary !dark:border-primary-fixed !bg-transparent"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed font-label-md text-label-md transition-colors hover:bg-surface-container-low dark:hover:bg-tertiary-container px-3 py-2 rounded-DEFAULT border-b-2 border-transparent"
+      >
+        Herramientas
+      </a>
+
+      <a
+        routerLink="/riego"
+        routerLinkActive="!text-primary !dark:text-primary-fixed !border-b-2 !border-primary !dark:border-primary-fixed !bg-transparent"
+        class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed font-label-md text-label-md transition-colors hover:bg-surface-container-low dark:hover:bg-tertiary-container px-3 py-2 rounded-DEFAULT border-b-2 border-transparent"
+      >
+        Riego
+      </a>
+
+      <a
+        routerLink="/semillas"
+        routerLinkActive="!text-primary !dark:text-primary-fixed !border-b-2 !border-primary !dark:border-primary-fixed !bg-transparent"
+        class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed font-label-md text-label-md transition-colors hover:bg-surface-container-low dark:hover:bg-tertiary-container px-3 py-2 rounded-DEFAULT border-b-2 border-transparent"
+      >
+        Semillas
+      </a>
+
+      <a
+        routerLink="/maquinaria"
+        routerLinkActive="!text-primary !dark:text-primary-fixed !border-b-2 !border-primary !dark:border-primary-fixed !bg-transparent"
+        class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed font-label-md text-label-md transition-colors hover:bg-surface-container-low dark:hover:bg-tertiary-container px-3 py-2 rounded-DEFAULT border-b-2 border-transparent"
+      >
+        Maquinaria
+      </a>
+
+      <a
+        routerLink="/seguridad"
+        routerLinkActive="!text-primary !dark:text-primary-fixed !border-b-2 !border-primary !dark:border-primary-fixed !bg-transparent"
+        class="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed font-label-md text-label-md transition-colors hover:bg-surface-container-low dark:hover:bg-tertiary-container px-3 py-2 rounded-DEFAULT border-b-2 border-transparent"
+      >
+        Seguridad
+      </a>
+    </nav>
+    <!-- Actions -->
+    <div class="flex items-center gap-sm">
+      <!-- Mobile Menu Button -->
+      <button
+        class="md:hidden p-2 text-secondary hover:text-primary transition-colors hover:bg-surface-container-low rounded-DEFAULT"
+      >
+        <span class="material-symbols-outlined" data-icon="menu">menu</span>
+      </button>
+      <button
+        class="p-2 text-secondary hover:text-primary transition-colors hover:bg-surface-container-low rounded-DEFAULT"
+      >
+        <span class="material-symbols-outlined" data-icon="search">search</span>
+      </button>
+      <button
+        routerLink="/cart"
+        aria-label="Ver carrito"
+        class="p-2 text-secondary hover:text-primary transition-colors hover:bg-surface-container-low rounded-DEFAULT relative"
+      >
+        <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+        @if (totalItems() > 0) {
+          <span
+            class="absolute top-1 right-1 bg-error text-on-error text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none"
+            >{{ totalItems() }}</span
+          >
+        }
+      </button>
+      <button
+        class="hidden md:block p-2 text-secondary hover:text-primary transition-colors hover:bg-surface-container-low rounded-DEFAULT"
+      >
+        <span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+      </button>
+    </div>
+  </div>
+</header>

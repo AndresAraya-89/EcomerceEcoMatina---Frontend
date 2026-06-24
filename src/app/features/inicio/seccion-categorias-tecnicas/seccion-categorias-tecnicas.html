@@ -1,0 +1,287 @@
+<section
+  class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-xl flex flex-col md:flex-row gap-lg"
+>
+  <!-- SideNavBar (Hidden on Mobile, Sticky on Desktop) -->
+  <aside
+    class="hidden md:flex flex-col w-[280px] p-md gap-md border-r border-outline-variant bg-surface-container-low sticky top-[80px] h-[calc(100vh-100px)] overflow-y-auto rounded-lg shadow-sm"
+  >
+    <div class="mb-sm border-b border-surface-dim pb-sm">
+      <h3 class="font-title-lg text-title-lg text-on-surface">Filtros Avanzados</h3>
+      <p class="font-body-md text-body-md text-secondary mt-1">Refina tu búsqueda técnica</p>
+    </div>
+    <nav class="flex flex-col gap-sm flex-grow">
+      <a
+        class="flex items-center justify-between p-md text-on-surface-variant hover:bg-surface-variant transition-colors rounded-DEFAULT cursor-pointer"
+        href="#"
+      >
+        <div class="flex items-center gap-sm">
+          <span class="material-symbols-outlined" data-icon="factory">factory</span>
+          <span class="font-label-md text-label-md">Marca</span>
+        </div>
+        <span class="material-symbols-outlined text-sm" data-icon="expand_more">expand_more</span>
+      </a>
+      <a
+        class="flex items-center justify-between p-md text-on-surface-variant hover:bg-surface-variant transition-colors rounded-DEFAULT cursor-pointer"
+        href="#"
+      >
+        <div class="flex items-center gap-sm">
+          <span class="material-symbols-outlined" data-icon="payments">payments</span>
+          <span class="font-label-md text-label-md">Precio</span>
+        </div>
+        <span class="material-symbols-outlined text-sm" data-icon="expand_more">expand_more</span>
+      </a>
+      <a
+        class="flex items-center justify-between p-md text-on-surface-variant hover:bg-surface-variant transition-colors rounded-DEFAULT cursor-pointer"
+        href="#"
+      >
+        <div class="flex items-center gap-sm">
+          <span class="material-symbols-outlined" data-icon="construction">construction</span>
+          <span class="font-label-md text-label-md">Uso</span>
+        </div>
+        <span class="material-symbols-outlined text-sm" data-icon="expand_more">expand_more</span>
+      </a>
+      <a
+        class="flex items-center gap-sm bg-primary-container text-on-primary-container rounded-lg p-md transition-colors cursor-pointer shadow-sm"
+        href="#"
+      >
+        <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+        <span class="font-label-md text-label-md font-bold">Disponibilidad</span>
+      </a>
+    </nav>
+    <div class="mt-auto pt-md border-t border-surface-dim">
+      <button
+        class="w-full bg-primary text-on-primary font-title-lg text-title-lg py-sm rounded-DEFAULT hover:bg-primary-fixed-variant transition-colors shadow-sm"
+      >
+        Aplicar Filtros
+      </button>
+    </div>
+  </aside>
+  <!-- Product Grid Area -->
+  <div class="flex-1 w-full">
+    <div class="flex items-center justify-between mb-lg">
+      <h2 class="font-headline-md text-headline-md text-on-surface">Equipamiento Destacado</h2>
+      <div class="flex items-center gap-sm text-secondary font-label-sm text-label-sm">
+        <span>Ordenar por:</span>
+        <select
+          class="bg-surface border border-outline-variant rounded-DEFAULT px-2 py-1 focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+        >
+          <option>Relevancia</option>
+          <option>Precio: Menor a Mayor</option>
+          <option>Precio: Mayor a Menor</option>
+          <option>Más vendidos</option>
+        </select>
+      </div>
+    </div>
+    <!-- Bento Grid for Products -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-md">
+      <!-- Product Card 1 -->
+      <article
+        class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col group hover:shadow-md transition-shadow duration-300"
+      >
+        <div class="relative h-48 bg-surface-container p-4 flex items-center justify-center">
+          <img
+            alt="Motocultor profesional rojo"
+            class="max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
+            data-alt="A professional-grade, bright red walk-behind rototiller (motocultor) resting on a concrete surface against a neutral background. The lighting is bright studio lighting, emphasizing the robust metal construction, large treaded tires, and sharp tines. The aesthetic is clean, industrial, and focused on agricultural machinery."
+            src="https://lh3.googleusercontent.com/aida/AP1WRLuS7kyq9Oak_EPQlkPtywOyO0j7hrU9Ges-Ta7sDNR8rDUry9Sq_Ai_EFb8jZYfUHXMwt8Qw-ZM_LCFKxCI9E9rO6gB6PqhiXT0M5NhjW-tP_2cfuZjero4qCRy007W3aiUftURh26Meh9bs7NEoGQDNxFVJYliyvuyEFa7sHoa8V_XxTUwNpy05Z7A6bm1AF0JtZYQ58eIlqldcGtukERqpI_h0o2EgQGhKfo1ntsJHAhL2keA6o0Ojcs"
+          />
+          <span
+            class="absolute top-2 left-2 bg-surface-tint text-on-primary font-label-sm text-label-sm px-2 py-1 rounded-DEFAULT"
+            >Stock Inmediato</span
+          >
+          <button
+            class="absolute top-2 right-2 p-1 text-secondary hover:text-primary transition-colors bg-surface-container-lowest rounded-full shadow-sm"
+          >
+            <span class="material-symbols-outlined text-[20px]" data-icon="favorite_border"
+              >favorite_border</span
+            >
+          </button>
+        </div>
+        <div class="p-md flex flex-col flex-grow">
+          <span class="font-label-sm text-label-sm text-secondary mb-1"
+            >AGRO-TECH | SKU: 884-MT</span
+          >
+          <h3
+            class="font-title-lg text-title-lg text-on-surface line-clamp-2 mb-2 group-hover:text-primary transition-colors"
+          >
+            Motocultor Profesional 9HP Diésel Arranque Eléctrico
+          </h3>
+          <ul class="font-body-md text-body-md text-on-surface-variant mb-4 space-y-1 flex-grow">
+            <li class="flex items-center gap-1 text-[13px]">
+              <span class="material-symbols-outlined text-[16px] text-outline" data-icon="check"
+                >check</span
+              >
+              Ancho de trabajo: 135cm
+            </li>
+            <li class="flex items-center gap-1 text-[13px]">
+              <span class="material-symbols-outlined text-[16px] text-outline" data-icon="check"
+                >check</span
+              >
+              Transmisión por engranajes
+            </li>
+          </ul>
+          <div class="mt-auto">
+            <div class="flex items-end gap-2 mb-3">
+              <span class="font-label-md text-label-md text-on-surface font-bold text-xl"
+                >1.450,00 €</span
+              >
+              <span class="font-label-sm text-label-sm text-secondary pb-1">IVA inc.</span>
+            </div>
+            <button
+              class="w-full bg-surface-variant hover:bg-primary hover:text-on-primary text-on-surface font-title-lg text-title-lg py-2 rounded-DEFAULT transition-colors flex items-center justify-center gap-2 border border-transparent hover:border-primary"
+            >
+              <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+              Añadir al carrito
+            </button>
+          </div>
+        </div>
+      </article>
+      <!-- Product Card 2 -->
+      <article
+        class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col group hover:shadow-md transition-shadow duration-300"
+      >
+        <div class="relative h-48 bg-surface-container p-4 flex items-center justify-center">
+          <img
+            alt="Bomba de agua de superficie industrial"
+            class="max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
+            data-alt="A heavy-duty industrial surface water pump painted in durable agricultural green. The pump features thick metal flanges, cooling fins on the motor housing, and a sturdy base plate. It is photographed in a well-lit studio environment with a clean white background. The image conveys reliability, power, and technical precision for irrigation systems."
+            src="https://lh3.googleusercontent.com/aida/AP1WRLvTZMPTBZ7W2M-QPDYy55rbg94cR3WPppJlyRNal6303VyZDhmw9X-j2e7P7oUdbzHypazyVMLavBpJFiYF2fivldSH4DW6pWCMOncwcY6nnkCkpau-NgC04-CSWYCmT-SQXWi0tW811MDqeImFk2K3iSavUzOgSK913HV_KgSN9JUUUGJH3hN4Dv0pteEC8hPzfG7PnZuY58I6qzy_y3SL07wxBDAdyPfdJoWXIMO4rQ444qSM22QRPp8"
+          />
+        </div>
+        <div class="p-md flex flex-col flex-grow">
+          <span class="font-label-sm text-label-sm text-secondary mb-1"
+            >HIDRO-PRO | SKU: PUMP-22X</span
+          >
+          <h3
+            class="font-title-lg text-title-lg text-on-surface line-clamp-2 mb-2 group-hover:text-primary transition-colors"
+          >
+            Bomba de Superficie Centrifuga Trifásica 5.5CV
+          </h3>
+          <ul class="font-body-md text-body-md text-on-surface-variant mb-4 space-y-1 flex-grow">
+            <li class="flex items-center gap-1 text-[13px]">
+              <span class="material-symbols-outlined text-[16px] text-outline" data-icon="check"
+                >check</span
+              >
+              Caudal máx: 36.000 l/h
+            </li>
+            <li class="flex items-center gap-1 text-[13px]">
+              <span class="material-symbols-outlined text-[16px] text-outline" data-icon="check"
+                >check</span
+              >
+              Altura máx: 48m
+            </li>
+          </ul>
+          <div class="mt-auto">
+            <div class="flex items-end gap-2 mb-3">
+              <span class="font-label-md text-label-md text-on-surface font-bold text-xl"
+                >485,50 €</span
+              >
+              <span class="font-label-sm text-label-sm text-secondary pb-1">IVA inc.</span>
+            </div>
+            <button
+              class="w-full bg-surface-variant hover:bg-primary hover:text-on-primary text-on-surface font-title-lg text-title-lg py-2 rounded-DEFAULT transition-colors flex items-center justify-center gap-2 border border-transparent hover:border-primary"
+            >
+              <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+              Añadir al carrito
+            </button>
+          </div>
+        </div>
+      </article>
+      <!-- Product Card 3 -->
+      <article
+        class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col group hover:shadow-md transition-shadow duration-300"
+      >
+        <div class="relative h-48 bg-surface-container p-4 flex items-center justify-center">
+          <img
+            alt="Tijeras de podar eléctricas profesionales"
+            class="max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
+            data-alt="A pair of high-tech, battery-powered electric pruning shears. The tool features a sleek ergonomic design with dark gray and vibrant green accents. The sharp steel blades are prominent. It rests on a clean, light surface in a bright, modern studio setting. The image emphasizes innovation, ergonomics, and professional tool quality."
+            src="https://lh3.googleusercontent.com/aida/AP1WRLvv0g3sVCKG36Roo2zm3oAJ8VPSbmXDqxoDL_R3LIfaH3YhoTn_juiZECRTgzAXyO7v8aZdsm-B_eZXmJmNmQKi22DF2x5kzBHg5xkFw_i4M2XK06j6zohRmzoheD7u3TFejnIi9HXReOOHOI9v-WHi6mA44VMEjK7IV2ePjHVZ2o4qTpL194ZiH6ZYz4Cc9Xh42aQcL1jH85D5YXLPv2YwKknNLLMJlwvrtMSVB7lXossosTpFjZMSOQ"
+          />
+          <span
+            class="absolute top-2 left-2 bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-2 py-1 rounded-DEFAULT"
+            >Novedad</span
+          >
+        </div>
+        <div class="p-md flex flex-col flex-grow">
+          <span class="font-label-sm text-label-sm text-secondary mb-1"
+            >CRAFT-AGRO | SKU: PRN-E80</span
+          >
+          <h3
+            class="font-title-lg text-title-lg text-on-surface line-clamp-2 mb-2 group-hover:text-primary transition-colors"
+          >
+            Tijera de Poda Eléctrica con Batería Litio 32mm
+          </h3>
+          <ul class="font-body-md text-body-md text-on-surface-variant mb-4 space-y-1 flex-grow">
+            <li class="flex items-center gap-1 text-[13px]">
+              <span class="material-symbols-outlined text-[16px] text-outline" data-icon="check"
+                >check</span
+              >
+              Autonomía: 8-10 horas
+            </li>
+            <li class="flex items-center gap-1 text-[13px]">
+              <span class="material-symbols-outlined text-[16px] text-outline" data-icon="check"
+                >check</span
+              >
+              Corte progresivo antideslizante
+            </li>
+          </ul>
+          <div class="mt-auto">
+            <div class="flex items-end gap-2 mb-3">
+              <span class="font-label-md text-label-md text-on-surface font-bold text-xl"
+                >299,00 €</span
+              >
+              <span class="font-label-sm text-label-sm text-secondary pb-1">IVA inc.</span>
+            </div>
+            <button
+              class="w-full bg-surface-variant hover:bg-primary hover:text-on-primary text-on-surface font-title-lg text-title-lg py-2 rounded-DEFAULT transition-colors flex items-center justify-center gap-2 border border-transparent hover:border-primary"
+            >
+              <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+              Añadir al carrito
+            </button>
+          </div>
+        </div>
+      </article>
+      <!-- Large Promotional Card spanning multiple columns on desktop -->
+      <article
+        class="col-span-1 sm:col-span-2 lg:col-span-3 rounded-xl overflow-hidden relative bg-primary-container text-on-primary-container shadow-sm flex flex-col sm:flex-row items-center"
+      >
+        <div class="p-lg md:p-xl flex-1 w-full">
+          <span
+            class="inline-block px-2 py-1 bg-on-primary-container text-primary-container font-label-sm text-label-sm rounded-sm uppercase tracking-wider mb-sm"
+            >Servicio Técnico</span
+          >
+          <h3 class="font-headline-md text-headline-md mb-2">
+            Mantenimiento Preventivo de Maquinaria
+          </h3>
+          <p class="font-body-md text-body-md opacity-90 mb-md max-w-lg">
+            Agenda una revisión completa de tus tractores y equipos motorizados antes del inicio de
+            campaña. Recambios originales y técnicos certificados.
+          </p>
+          <button
+            class="bg-surface text-primary font-title-lg text-title-lg px-md py-sm rounded-DEFAULT hover:bg-surface-variant transition-colors inline-flex items-center gap-2 shadow-sm"
+          >
+            Solicitar Presupuesto
+            <span class="material-symbols-outlined text-sm" data-icon="arrow_forward"
+              >arrow_forward</span
+            >
+          </button>
+        </div>
+        <div class="w-full sm:w-1/3 h-48 sm:h-full relative overflow-hidden hidden sm:block">
+          <!-- Shader animation placeholder for a technical/mechanical background effect -->
+
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-primary-container to-transparent z-10"
+          ></div>
+        </div>
+      </article>
+    </div>
+    <div class="flex justify-center mt-lg">
+      <button
+        class="border border-outline text-secondary hover:text-primary hover:border-primary font-title-lg text-title-lg px-lg py-2 rounded-DEFAULT transition-colors"
+      >
+        Cargar más productos
+      </button>
+    </div>
+  </div>
+</section>

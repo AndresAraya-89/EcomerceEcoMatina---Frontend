@@ -1,0 +1,5 @@
+/* Estilos especificos del carrito. El layout y los colores se resuelven con las
+   utilidades de Tailwind y los tokens del tema en la plantilla. */
+:host {
+  display: block;
+}
