@@ -1,0 +1,167 @@
+<section class="max-w-3xl mx-auto w-full px-margin-mobile md:px-margin-desktop pt-lg pb-2xl">
+  <header class="mb-lg">
+    <h1 class="font-headline-md text-headline-md font-bold text-on-surface">
+      Solicitar cotización
+    </h1>
+    <p class="mt-1 font-body-md text-secondary">
+      Cuéntanos qué necesitas y te responderemos lo antes posible. No necesitas tener cuenta.
+    </p>
+  </header>
+
+  <!-- Resultado exitoso -->
+  @if (resultado(); as res) {
+    <div class="mb-lg rounded-lg border border-primary bg-primary-container p-md text-on-primary-container">
+      <p class="font-label-lg">¡Listo! {{ res.mensaje }}</p>
+      <p class="text-label-md">
+        Número de solicitud: <strong>#{{ res.id }}</strong>.
+        @if (!res.notificado) {
+          <span> Si no recibes respuesta pronto, escríbenos directo por WhatsApp.</span>
+        }
+      </p>
+    </div>
+  }
+
+  <!-- Error de envío -->
+  @if (errorEnvio(); as msg) {
+    <div class="mb-lg rounded-lg border border-error bg-error-container p-md text-on-error-container">
+      {{ msg }}
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="enviar()" class="flex flex-col gap-md" novalidate>
+    <div class="grid gap-md md:grid-cols-2">
+      <!-- Tipo de identificación -->
+      <label class="flex flex-col gap-1">
+        <span class="font-label-md text-on-surface">Tipo de identificación</span>
+        <select
+          formControlName="tipo_identificacion"
+          class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+        >
+          @for (tipo of tiposIdentificacion; track tipo.valor) {
+            <option [value]="tipo.valor">{{ tipo.etiqueta }}</option>
+          }
+        </select>
+      </label>
+
+      <!-- Número de identificación -->
+      <label class="flex flex-col gap-1">
+        <span class="font-label-md text-on-surface">Número de identificación</span>
+        <input
+          type="text"
+          formControlName="numero_identificacion"
+          class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+        />
+        @if (form.controls.numero_identificacion.touched && form.controls.numero_identificacion.invalid) {
+          <span class="text-label-sm text-error">Ingresa tu número de identificación.</span>
+        }
+      </label>
+    </div>
+
+    <!-- Nombre -->
+    <label class="flex flex-col gap-1">
+      <span class="font-label-md text-on-surface">Nombre completo</span>
+      <input
+        type="text"
+        formControlName="nombre"
+        class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+      />
+      @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+        <span class="text-label-sm text-error">El nombre es obligatorio.</span>
+      }
+    </label>
+
+    <div class="grid gap-md md:grid-cols-2">
+      <!-- Correo -->
+      <label class="flex flex-col gap-1">
+        <span class="font-label-md text-on-surface">Correo electrónico</span>
+        <input
+          type="email"
+          formControlName="correo"
+          class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+        />
+        @if (form.controls.correo.touched && form.controls.correo.invalid) {
+          <span class="text-label-sm text-error">Ingresa un correo válido.</span>
+        }
+      </label>
+
+      <!-- Teléfono -->
+      <label class="flex flex-col gap-1">
+        <span class="font-label-md text-on-surface">Teléfono</span>
+        <input
+          type="tel"
+          formControlName="telefono"
+          placeholder="8888-7777"
+          class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+        />
+        @if (form.controls.telefono.touched && form.controls.telefono.invalid) {
+          <span class="text-label-sm text-error">Teléfono inválido (8 a 15 dígitos).</span>
+        }
+      </label>
+    </div>
+
+    <!-- Asunto -->
+    <label class="flex flex-col gap-1">
+      <span class="font-label-md text-on-surface">Asunto</span>
+      <input
+        type="text"
+        formControlName="asunto"
+        class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+      />
+    </label>
+
+    <!-- Mensaje -->
+    <label class="flex flex-col gap-1">
+      <span class="font-label-md text-on-surface">Mensaje</span>
+      <textarea
+        formControlName="mensaje"
+        rows="5"
+        placeholder="Describe los productos o cantidades que necesitas…"
+        class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+      ></textarea>
+      @if (form.controls.mensaje.touched && form.controls.mensaje.invalid) {
+        <span class="text-label-sm text-error">El mensaje debe tener al menos 10 caracteres.</span>
+      }
+    </label>
+
+    <!-- Adjuntos -->
+    <div class="flex flex-col gap-2">
+      <span class="font-label-md text-on-surface">
+        Adjuntos <span class="text-secondary">(opcional · PDF/PNG/JPEG · máx 5 · 10 MB c/u)</span>
+      </span>
+      <input
+        type="file"
+        multiple
+        accept="application/pdf,image/png,image/jpeg"
+        (change)="onArchivos($event)"
+        class="block w-full text-label-md text-secondary file:mr-3 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:text-on-primary hover:file:opacity-90"
+      />
+      @if (errorArchivos(); as msg) {
+        <span class="text-label-sm text-error">{{ msg }}</span>
+      }
+      @if (archivos().length > 0) {
+        <ul class="flex flex-col gap-1">
+          @for (archivo of archivos(); track archivo.name; let i = $index) {
+            <li class="flex items-center justify-between rounded-lg border border-outline-variant bg-surface-container-low px-3 py-2">
+              <span class="truncate text-label-md text-on-surface">{{ archivo.name }}</span>
+              <button
+                type="button"
+                (click)="quitarArchivo(i)"
+                class="text-error hover:underline text-label-md"
+              >
+                Quitar
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="enviando()"
+      class="mt-sm self-start rounded-full bg-primary px-12 py-4 font-label-lg text-on-primary hover:opacity-90 transition disabled:opacity-50"
+    >
+      @if (enviando()) { Enviando… } @else { Enviar solicitud }
+    </button>
+  </form>
+</section>

@@ -1,0 +1,5 @@
+/* El layout y los colores se resuelven con utilidades de Tailwind y los tokens
+   del tema en la plantilla. */
+:host {
+  display: block;
+}

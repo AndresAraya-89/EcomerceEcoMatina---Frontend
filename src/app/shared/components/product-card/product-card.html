@@ -1,0 +1,50 @@
+@let p = producto();
+
+<article
+  class="group flex flex-col overflow-hidden rounded-lg border border-outline-variant bg-surface transition hover:shadow-md"
+>
+  <a [routerLink]="['/producto', p.codigo]" class="relative block aspect-square overflow-hidden bg-surface-container-low">
+    <img
+      [src]="p.imagen_url || imagenFallback()"
+      [alt]="p.nombre"
+      loading="lazy"
+      class="h-full w-full object-cover transition group-hover:scale-105"
+    />
+    @if (p.en_oferta && p.porcentaje_descuento) {
+      <span
+        class="absolute left-2 top-2 rounded-full bg-error px-2 py-0.5 text-label-sm font-bold text-on-error"
+      >
+        -{{ p.porcentaje_descuento }}%
+      </span>
+    }
+  </a>
+
+  <div class="flex flex-1 flex-col gap-2 p-md">
+    <a
+      [routerLink]="['/producto', p.codigo]"
+      class="line-clamp-2 font-label-lg text-on-surface hover:text-primary"
+    >
+      {{ p.nombre }}
+    </a>
+
+    <div class="mt-auto">
+      @if (p.en_oferta && p.precio_original) {
+        <p class="text-label-md text-secondary line-through">
+          {{ p.precio_original | currency: 'CRC' : 'symbol-narrow' }}
+        </p>
+      }
+      <p class="font-title-md text-title-md font-bold text-primary">
+        {{ p.precio_actual | currency: 'CRC' : 'symbol-narrow' }}
+      </p>
+    </div>
+
+    <button
+      type="button"
+      (click)="onAgregar()"
+      class="mt-2 flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 font-label-md text-on-primary transition hover:opacity-90"
+    >
+      <span class="material-symbols-outlined text-base">add_shopping_cart</span>
+      Agregar
+    </button>
+  </div>
+</article>

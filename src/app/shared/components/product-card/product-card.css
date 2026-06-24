@@ -1,0 +1,4 @@
+/* Presentacion resuelta con Tailwind y los tokens del tema en la plantilla. */
+:host {
+  display: block;
+}

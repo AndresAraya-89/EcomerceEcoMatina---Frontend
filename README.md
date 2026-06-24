@@ -1,59 +1,123 @@
-# AgromatinaFront
+# AgroMatina — Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.29.
+E-commerce de la ferretería **AgroMatina**. Frontend en **Angular 20 + Tailwind CSS v4**
+que consume la API de FastAPI (backend `backendagromatina`).
 
-## Development server
+- Dev server: `npm start` → `http://localhost:4200` (o el puerto que indique la CLI).
+- Backend (API): `http://localhost:8000`, todos los endpoints bajo `/api/v1`.
+- URL base configurable en `src/environments/environment.ts` (`apiUrl`).
 
-To start a local development server, run:
+## Arquitectura
 
-```bash
-ng serve
+```
+src/app/
+  core/                      # Lógica transversal (sin UI)
+    models/                  # Interfaces que calzan con los schemas del backend
+    services/                # Servicios con responsabilidad única (SOLID)
+  features/                  # Páginas / módulos de negocio
+  shared/components/         # Componentes reutilizables (header, footer)
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Buenas prácticas aplicadas: **standalone components**, **signals** (`signal`/`computed`/`effect`),
+`inject()`, `ChangeDetectionStrategy.OnPush`, y separación SRP (API ↔ estado ↔ persistencia).
 
-## Code scaffolding
+### Estado actual
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+| Pieza | Estado |
+|---|---|
+| Base visual (header, footer, home, categorías) | ✅ |
+| Carrito conectado a la API (`cart`) | ✅ |
+| Resto de módulos | ⏳ Pendiente |
+
+---
+
+## 🗺️ Mapa del Backend — API AgroMatina (`/api/v1`)
+
+🔒 = requiere `Authorization: Bearer <token>`
+
+### 1. 🔐 `auth` — Autenticación · `/api/v1/auth`
+| Método | Endpoint | Para qué |
+|---|---|---|
+| POST | `/register` | Registro de cliente + usuario |
+| POST | `/login` | Login → access + refresh token (JWT) |
+| POST | `/verify-account` | Activar cuenta por correo |
+| POST | `/refresh` | Renovar tokens |
+| POST | `/logout` 🔒 | Cerrar sesión |
+| POST | `/change-password` 🔒 | Cambiar contraseña |
+| POST | `/forgot-password` | Solicitar recuperación |
+| POST | `/reset-password` | Restablecer con token |
+| GET | `/me` 🔒 | Perfil del usuario actual |
+
+Tablas: `clientes`, `usuarios`, `tokens_verificacion`, `cambios_correo`
+
+### 2. 🛒 `product` — Catálogo (público) · `/api/v1`
+| Método | Endpoint | Para qué |
+|---|---|---|
+| GET | `/products/ofertas` | Ofertas del home (máx 8) |
+| GET | `/products/mas-vendidos` | Más vendidos del home |
+| GET | `/products/search?q=&categoria=&page=` | Búsqueda + filtro + paginación |
+| GET | `/categories` | Categorías (menú) |
+| GET | `/banners` | Carrusel del home |
+| GET | `/categories/{codigo}/products?page=` | Grilla por categoría |
+| GET | `/products/{codigo}` | Detalle de producto + galería |
+
+Tablas: `categorias`, `productos`, `producto_imagenes`, `banners`
+
+### 3. 🛍️ `cart` — Carrito · `/api/v1/cart` ✅ *(ya conectado)*
+| Método | Endpoint | Para qué |
+|---|---|---|
+| POST | `/cart/validate-item` | Validar stock/precio al agregar (RF-12) |
+| POST | `/cart/summary` | Total seguro recalculado (RF-14) |
+
+### 4. 💳 `pagos` — Proceso de pago · `/api/v1/pagos`
+| Método | Endpoint | Para qué |
+|---|---|---|
+| POST | `/checkout` | Elegir método (SINPE / internacional) |
+| POST | `/confirmar` | Confirmar pago + factura PDF + correo |
+
+### 5. 📄 `quote` — Cotizaciones (público) · `/api/v1/quotes`
+| Método | Endpoint | Para qué |
+|---|---|---|
+| POST | `/quotes` | Formulario con adjuntos (multipart, máx 5) → WhatsApp |
+
+Tablas: `solicitudes_cotizacion`, `cotizacion_archivos`
+
+### 6. 🧾 `mis_facturas` — Mis Facturas 🔒 · `/api/v1/mis-facturas`
+| Método | Endpoint | Para qué |
+|---|---|---|
+| GET | `/mis-facturas` | Historial paginado del cliente |
+| GET | `/mis-facturas/{numero_orden}` | Detalle (modal) |
+| GET | `/mis-facturas/{numero_orden}/pdf` | Descargar PDF |
+
+Tablas: `direccion` (+ pedidos / facturas)
+
+### ⚙️ Módulos que NO consume el navegador
+- **`sync`** (`/api/v1/sync`): lo usa la **app de escritorio** (fuente de verdad del catálogo).
+  Requiere header `X-API-Key`. **No se toca desde el frontend.**
+- **`admin`** y **`client`**: carpetas vacías, no implementadas aún.
+
+> ⚠️ El backend serializa los `Decimal` como **texto** (`"38250.00"`). Convertir a `number`
+> en la capa de servicios (ver `core/services/cart-api.service.ts` como referencia).
+
+---
+
+## Orden de desarrollo sugerido
+
+| # | Módulo frontend | Depende de | Notas |
+|---|---|---|---|
+| 1 | Catálogo (home, grillas, detalle, búsqueda) | `product` (público) | Destraba el botón "Agregar al carrito" |
+| 2 | Carrito + botón Agregar | `cart` | Carrito ya hecho; falta el botón en las tarjetas |
+| 3 | Auth (login/registro/recuperación) | `auth` | Necesita interceptor JWT + guard |
+| 4 | Checkout / Pagos | `pagos` | Cierra el flujo de compra |
+| 5 | Mis Facturas 🔒 | `mis_facturas` | Requiere auth (paso 3) |
+| 6 | Cotizaciones | `quote` | Formulario público independiente |
+
+---
+
+## Comandos
 
 ```bash
-ng generate component component-name
+npm start      # servidor de desarrollo
+npm run build  # build de producción (dist/)
+npm test       # pruebas unitarias (Karma)
 ```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
