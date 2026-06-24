@@ -8,6 +8,7 @@ import { Seguridad } from './features/seguridad/seguridad';
 import { Cart } from './features/cart/cart';
 import { Cotizacion } from './features/cotizacion/cotizacion';
 import { Categoria } from './features/categoria/categoria';
+import { Producto } from './features/producto/producto';
 
 export const routes: Routes = [
     // Ruta por defecto: redirige de '' a 'home'
@@ -15,6 +16,8 @@ export const routes: Routes = [
     { path: 'inicio', component: Inicio },
     // Pagina generica de catalogo por categoria (data-driven, RF-05)
     { path: 'categoria/:codigo', component: Categoria },
+    // Detalle de producto (RF-07)
+    { path: 'producto/:codigo', component: Producto },
     { path: 'riego', component: Riego },
     { path: 'herramientas', component: Herramientas },
     { path: 'semillas', component: Semillas },

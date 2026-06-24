@@ -31,13 +31,13 @@
 
         @if (productosAbierto()) {
           <div
-            class="absolute left-0 top-full mt-1 w-56 rounded-lg border border-outline-variant bg-surface dark:bg-on-surface shadow-lg py-2 z-50"
+            class="absolute left-0 top-full mt-2 flex w-60 flex-col gap-0.5 rounded-xl border border-outline-variant bg-surface dark:bg-on-surface p-2 shadow-xl ring-1 ring-black/5 z-50"
           >
             @for (categoria of categorias(); track categoria.codigo) {
               <a
                 [routerLink]="['/categoria', categoria.codigo]"
                 (click)="cerrarProductos()"
-                class="block px-5 py-2 text-left text-label-md text-secondary hover:bg-surface-container-low hover:text-primary transition-colors"
+                class="w-full rounded-lg px-4 py-2.5 text-left font-label-md text-label-md text-secondary hover:bg-surface-container-low hover:text-primary transition-colors"
               >
                 {{ categoria.nombre }}
               </a>

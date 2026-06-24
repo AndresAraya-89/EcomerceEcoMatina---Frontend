@@ -1,0 +1,113 @@
+<section class="max-w-max-width mx-auto w-full px-margin-mobile md:px-margin-desktop pt-lg pb-2xl">
+  @if (detalle.isLoading()) {
+    <p class="py-2xl text-center font-body-lg text-secondary">Cargando producto…</p>
+  } @else if (detalle.error()) {
+    <div class="rounded-lg border border-error bg-error-container p-md text-on-error-container">
+      No se encontró el producto o el servidor no está disponible.
+      <a routerLink="/inicio" class="ml-1 underline">Volver al inicio</a>
+    </div>
+  } @else if (detalle.value(); as p) {
+    <!-- Migaja de pan -->
+    <nav class="mb-md flex items-center gap-1 font-label-md text-secondary">
+      <a routerLink="/inicio" class="hover:text-primary">Inicio</a>
+      @if (p.categoria) {
+        <span>/</span>
+        <a [routerLink]="['/categoria', p.categoria.codigo]" class="hover:text-primary">
+          {{ p.categoria.nombre }}
+        </a>
+      }
+      <span>/</span>
+      <span class="text-on-surface">{{ p.nombre }}</span>
+    </nav>
+
+    <div class="grid gap-xl lg:grid-cols-2">
+      <!-- Galería -->
+      <div class="flex flex-col gap-md">
+        <div class="aspect-square overflow-hidden rounded-lg border border-outline-variant bg-surface-container-low">
+          <img
+            [src]="imagenSeleccionada()"
+            [alt]="p.nombre"
+            class="h-full w-full object-cover"
+          />
+        </div>
+        @if (p.imagenes.length > 1) {
+          <div class="flex gap-2">
+            @for (img of p.imagenes; track img.url) {
+              <button
+                type="button"
+                (click)="seleccionarImagen(img.url)"
+                class="h-20 w-20 overflow-hidden rounded-lg border-2 transition"
+                [class.border-primary]="imagenSeleccionada() === img.url"
+                [class.border-outline-variant]="imagenSeleccionada() !== img.url"
+              >
+                <img [src]="img.url" [alt]="p.nombre" class="h-full w-full object-cover" />
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Información -->
+      <div class="flex flex-col gap-md">
+        <h1 class="font-headline-md text-headline-md font-bold text-on-surface">{{ p.nombre }}</h1>
+
+        <div class="flex items-end gap-3">
+          @if (p.en_oferta && p.precio_original) {
+            <span class="font-body-lg text-secondary line-through">
+              {{ p.precio_original | currency: 'CRC' : 'symbol-narrow' }}
+            </span>
+            @if (p.porcentaje_descuento) {
+              <span class="rounded-full bg-error px-2 py-0.5 text-label-sm font-bold text-on-error">
+                -{{ p.porcentaje_descuento }}%
+              </span>
+            }
+          }
+        </div>
+        <p class="font-headline-sm text-headline-sm font-bold text-primary">
+          {{ p.precio_actual | currency: 'CRC' : 'symbol-narrow' }}
+        </p>
+
+        @if (p.descripcion) {
+          <p class="font-body-md text-secondary">{{ p.descripcion }}</p>
+        }
+
+        <!-- Selector de cantidad -->
+        <div class="mt-sm flex items-center gap-md">
+          <span class="font-label-md text-on-surface">Cantidad</span>
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              (click)="cambiarCantidad(-1)"
+              class="grid h-9 w-9 place-items-center rounded-full border border-outline text-on-surface hover:bg-surface-container-low"
+              aria-label="Disminuir"
+            >
+              &minus;
+            </button>
+            <span class="w-8 text-center font-label-lg">{{ cantidad() }}</span>
+            <button
+              type="button"
+              (click)="cambiarCantidad(1)"
+              class="grid h-9 w-9 place-items-center rounded-full border border-outline text-on-surface hover:bg-surface-container-low"
+              aria-label="Aumentar"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          (click)="agregar()"
+          class="mt-sm flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 font-label-lg text-on-primary transition hover:opacity-90"
+        >
+          <span class="material-symbols-outlined">add_shopping_cart</span>
+          Agregar al carrito
+        </button>
+
+        @if (agregadoOk()) {
+          <p class="font-label-md text-primary">✓ Producto agregado al carrito.</p>
+        }
+      </div>
+    </div>
+  }
+</section>
