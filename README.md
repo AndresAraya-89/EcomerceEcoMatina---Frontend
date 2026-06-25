@@ -27,7 +27,42 @@ Buenas prácticas aplicadas: **standalone components**, **signals** (`signal`/`c
 |---|---|
 | Base visual (header, footer, home, categorías) | ✅ |
 | Carrito conectado a la API (`cart`) | ✅ |
+| **Seguridad / Auth (login, registro, verificación, perfil)** | 🚧 En progreso (ver abajo) |
 | Resto de módulos | ⏳ Pendiente |
+
+#### 🔐 Módulo de Seguridad — dónde quedó
+
+Estructura (capas SRP: API ↔ estado ↔ persistencia):
+
+```
+core/
+  models/auth.models.ts          # Interfaces que calzan con los schemas del backend
+  services/
+    auth.service.ts              # Fachada + store con signals (estaAutenticado, usuario, rol)
+    auth-api.service.ts          # Transporte HTTP puro a /api/v1/auth
+    token-storage.service.ts     # Persistencia de tokens (access/refresh)
+  guards/auth.guard.ts           # Protege rutas (con ?returnUrl=)
+  interceptors/auth.interceptor.ts  # Inyecta Bearer + refresca el token ante 401
+  validators/auth.validators.ts  # clave segura, teléfono, claves coinciden
+features/
+  auth/login                     # ✅ Login (CU-04) — maneja cuenta sin verificar (reenvío)
+  auth/registro                  # ✅ Registro (CU-06) — form reactivo, valida igual que el backend
+  auth/verificar-cuenta          # ✅ Verificación por correo (CU-07) — lee ?token= y activa la cuenta
+  perfil                         # 🚧 Perfil (CU-19) — ruta protegida con authGuard
+```
+
+Rutas registradas en `app.routes.ts`: `/auth` (login), `/registro`, `/verificar-cuenta`, `/perfil` 🔒.
+
+**Hecho:** login, registro, verificación de cuenta, interceptor JWT + refresh, guard, validadores.
+
+**Pendiente (mismo patrón, falta la vista en el frontend):**
+- `/recuperar-contrasena` → consume `POST /auth/reset-password` (enlace que llega por correo).
+- `/confirmar-correo` → consume `POST /auth/confirm-email-change` (cambio de correo desde el perfil).
+- Terminar la página de **perfil** (`features/perfil`).
+
+> ⚠️ **Config del backend para que lleguen los correos:** en el `.env` del backend, `EMAIL_MODE=smtp`
+> (con SMTP_* de Gmail) y `FRONTEND_URL=http://localhost:4200` (los enlaces de los correos apuntan ahí).
+> Con `EMAIL_MODE=console` el correo NO se envía, solo se imprimiría en los logs.
 
 ---
 
@@ -107,7 +142,7 @@ Tablas: `direccion` (+ pedidos / facturas)
 |---|---|---|---|
 | 1 | Catálogo (home, grillas, detalle, búsqueda) | `product` (público) | Destraba el botón "Agregar al carrito" |
 | 2 | Carrito + botón Agregar | `cart` | Carrito ya hecho; falta el botón en las tarjetas |
-| 3 | Auth (login/registro/recuperación) | `auth` | Necesita interceptor JWT + guard |
+| 3 | Auth (login/registro/recuperación) | `auth` | 🚧 Login, registro, verificación, interceptor JWT y guard hechos. Falta recuperación de contraseña, confirmar cambio de correo y terminar perfil |
 | 4 | Checkout / Pagos | `pagos` | Cierra el flujo de compra |
 | 5 | Mis Facturas 🔒 | `mis_facturas` | Requiere auth (paso 3) |
 | 6 | Cotizaciones | `quote` | Formulario público independiente |

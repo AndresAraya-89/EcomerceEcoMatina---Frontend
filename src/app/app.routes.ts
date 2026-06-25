@@ -9,6 +9,11 @@ import { Cart } from './features/cart/cart';
 import { Cotizacion } from './features/cotizacion/cotizacion';
 import { Categoria } from './features/categoria/categoria';
 import { Producto } from './features/producto/producto';
+import { Login } from './features/auth/login/login';
+import { Registro } from './features/auth/registro/registro';
+import { VerificarCuenta } from './features/auth/verificar-cuenta/verificar-cuenta';
+import { Perfil } from './features/perfil/perfil';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
     // Ruta por defecto: redirige de '' a 'home'
@@ -25,6 +30,13 @@ export const routes: Routes = [
     { path: 'seguridad', component: Seguridad },
     { path: 'cart', component: Cart },
     { path: 'cotizacion', component: Cotizacion },
+    // Seguridad / autenticacion (CU-04 / CU-06)
+    { path: 'auth', component: Login },
+    { path: 'registro', component: Registro },
+    // Verificacion de cuenta (CU-07) — destino del enlace del correo
+    { path: 'verificar-cuenta', component: VerificarCuenta },
+    // Mi Perfil (CU-19) — protegida: requiere sesion activa
+    { path: 'perfil', component: Perfil, canActivate: [authGuard] },
 
 
 
