@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -17,18 +17,26 @@ import { ProductoCard } from '../../../core/models/product.models';
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'block' },
 })
 export class ProductCard {
   /** Producto a mostrar. */
   readonly producto = input.required<ProductoCard>();
 
-  /** Imagen por defecto cuando el producto no tiene foto. */
-  readonly imagenFallback = input('/favicon.ico');
-
   /** Emite el codigo del producto al pulsar "Agregar al carrito". */
   readonly agregar = output<string>();
 
+  /** True si la imagen no cargo; muestra un placeholder. Se reinicia por producto. */
+  readonly imagenRota = linkedSignal<ProductoCard, boolean>({
+    source: this.producto,
+    computation: () => false,
+  });
+
   onAgregar(): void {
     this.agregar.emit(this.producto().codigo);
+  }
+
+  marcarImagenRota(): void {
+    this.imagenRota.set(true);
   }
 }

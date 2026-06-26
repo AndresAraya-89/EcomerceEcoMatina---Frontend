@@ -1,0 +1,33 @@
+<!-- Pila fija arriba-derecha; no bloquea el contenido (pointer-events solo en cada toast). -->
+<div
+  class="pointer-events-none fixed top-4 right-4 z-[100] flex w-[min(92vw,360px)] flex-col gap-2"
+  aria-live="polite"
+  aria-atomic="true"
+>
+  @for (n of items(); track n.id) {
+    <div
+      class="pointer-events-auto flex items-start gap-2 rounded-lg border p-3 shadow-lg ring-1 ring-black/5 transition"
+      [class.bg-primary-container]="n.tipo === 'exito'"
+      [class.border-primary]="n.tipo === 'exito'"
+      [class.text-on-primary-container]="n.tipo === 'exito'"
+      [class.bg-error-container]="n.tipo === 'error'"
+      [class.border-error]="n.tipo === 'error'"
+      [class.text-on-error-container]="n.tipo === 'error'"
+      [class.bg-surface-container-high]="n.tipo === 'info'"
+      [class.border-outline-variant]="n.tipo === 'info'"
+      [class.text-on-surface]="n.tipo === 'info'"
+      [attr.role]="n.tipo === 'error' ? 'alert' : 'status'"
+    >
+      <span class="material-symbols-outlined text-[20px]">{{ icono(n.tipo) }}</span>
+      <p class="flex-1 font-label-md text-label-md leading-snug">{{ n.mensaje }}</p>
+      <button
+        type="button"
+        (click)="descartar(n.id)"
+        aria-label="Cerrar aviso"
+        class="-mr-1 -mt-1 rounded-full p-0.5 opacity-70 transition hover:opacity-100"
+      >
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+    </div>
+  }
+</div>

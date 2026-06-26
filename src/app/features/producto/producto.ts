@@ -67,9 +67,6 @@ export class Producto {
   /** Cantidad a agregar al carrito. */
   readonly cantidad = signal(1);
 
-  /** Mensaje de confirmacion tras agregar. */
-  readonly agregadoOk = signal(false);
-
   readonly enOferta = computed(() => this.detalle.value()?.en_oferta ?? false);
 
   seleccionarImagen(url: string): void {
@@ -85,8 +82,7 @@ export class Producto {
     if (!d) {
       return;
     }
+    // El feedback (éxito/error/stock) lo da el toast global vía CartService.
     this.cart.agregar(d.codigo, this.cantidad());
-    this.agregadoOk.set(true);
-    setTimeout(() => this.agregadoOk.set(false), 2500);
   }
 }

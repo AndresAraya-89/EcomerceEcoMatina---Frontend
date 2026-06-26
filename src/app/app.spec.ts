@@ -1,23 +1,26 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+
 import { App } from './app';
 
-describe('App', () => {
+/**
+ * Smoke test del shell. Solo verifica que el componente raiz se construye con sus
+ * dependencias resueltas (router + HttpClient que usan header/footer). No se
+ * dispara change detection para no instanciar los hijos ni sus peticiones HTTP:
+ * eso se cubre en los specs de cada componente.
+ */
+describe('App (shell)', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
   });
 
-  it('should create the app', () => {
+  it('se crea correctamente', () => {
     const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, AgromatinaFront');
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });
