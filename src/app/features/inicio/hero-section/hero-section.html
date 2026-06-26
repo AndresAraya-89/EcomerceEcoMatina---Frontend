@@ -23,17 +23,21 @@
         lo que necesitas para una cosecha exitosa, respaldado por soporte técnico especializado.
       </p>
       <div class="flex flex-col sm:flex-row gap-sm pt-sm">
-        <button
+        <a
+          routerLink="/inicio"
+          fragment="categorias"
           class="bg-primary hover:bg-primary-fixed-variant text-on-primary font-title-lg text-title-lg px-lg py-md rounded-DEFAULT transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center gap-2"
         >
           Explorar Catálogo
           <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
-        </button>
-        <button
+        </a>
+        <a
+          routerLink="/inicio"
+          fragment="ofertas"
           class="border-2 border-outline hover:border-primary text-secondary hover:text-primary font-title-lg text-title-lg px-lg py-md rounded-DEFAULT transition-all duration-200 flex items-center justify-center gap-2"
         >
           Ver Ofertas
-        </button>
+        </a>
       </div>
     </div>
     <div class="min-w-0 flex-1 w-full mt-lg md:mt-0">

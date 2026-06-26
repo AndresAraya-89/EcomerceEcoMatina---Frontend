@@ -164,6 +164,11 @@
   --text-display-lg--font-weight: 700;
 }
 
+/* Scroll suave para el anclaje de secciones (hero → #ofertas / #categorias). */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Iconos Material Symbols */
 .material-symbols-outlined {
   font-variation-settings:

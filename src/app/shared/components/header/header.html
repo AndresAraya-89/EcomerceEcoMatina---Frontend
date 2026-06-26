@@ -7,7 +7,7 @@
     <!-- Brand -->
     <a
       class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed flex items-center gap-2"
-      href="#"
+      routerLink="/inicio"
     >
       <span
         class="material-symbols-outlined filled"
@@ -58,12 +58,23 @@
     <div class="flex items-center gap-sm">
       <!-- Mobile Menu Button -->
       <button
+        type="button"
+        (click)="alternarMenuMovil()"
+        aria-label="Menú de navegación"
+        aria-controls="menu-movil"
+        [attr.aria-expanded]="menuMovilAbierto()"
         class="md:hidden p-2 text-secondary hover:text-primary transition-colors hover:bg-surface-container-low rounded-DEFAULT"
+        [class.text-primary]="menuMovilAbierto()"
       >
-        <span class="material-symbols-outlined" data-icon="menu">menu</span>
+        <span class="material-symbols-outlined">{{ menuMovilAbierto() ? 'close' : 'menu' }}</span>
       </button>
       <button
+        type="button"
+        (click)="alternarBusqueda()"
+        aria-label="Buscar productos"
+        [attr.aria-expanded]="busquedaAbierta()"
         class="p-2 text-secondary hover:text-primary transition-colors hover:bg-surface-container-low rounded-DEFAULT"
+        [class.text-primary]="busquedaAbierta()"
       >
         <span class="material-symbols-outlined" data-icon="search">search</span>
       </button>
@@ -109,13 +120,6 @@
               >
                 Mi perfil
               </a>
-              <a
-                routerLink="/mis-facturas"
-                (click)="cerrarCuenta()"
-                class="w-full rounded-lg px-4 py-2.5 text-left font-label-md text-label-md text-secondary hover:bg-surface-container-low hover:text-primary transition-colors"
-              >
-                Mis facturas
-              </a>
               <hr class="my-1 border-outline-variant" />
               <button
                 type="button"
@@ -138,4 +142,113 @@
       }
     </div>
   </div>
+
+  <!-- Barra de búsqueda desplegable (RF-08): se muestra al pulsar la lupa. -->
+  @if (busquedaAbierta()) {
+    <div class="border-t border-outline-variant dark:border-outline bg-surface dark:bg-on-surface">
+      <form
+        role="search"
+        (submit)="buscar(termino.value); $event.preventDefault()"
+        class="max-w-max-width mx-auto flex items-center gap-sm px-margin-mobile md:px-margin-desktop py-sm w-full"
+      >
+        <span class="material-symbols-outlined text-secondary">search</span>
+        <input
+          #termino
+          type="search"
+          autofocus
+          (keydown.escape)="cerrarBusqueda()"
+          placeholder="Buscar productos…"
+          aria-label="Término de búsqueda"
+          class="flex-1 bg-transparent py-2 font-body-md text-body-md text-on-surface outline-none placeholder:text-secondary"
+        />
+        <button
+          type="submit"
+          class="rounded-DEFAULT bg-primary px-4 py-2 font-label-md text-label-md text-on-primary hover:bg-primary-fixed-variant transition-colors"
+        >
+          Buscar
+        </button>
+        <button
+          type="button"
+          (click)="cerrarBusqueda()"
+          aria-label="Cerrar búsqueda"
+          class="p-2 text-secondary hover:text-primary transition-colors hover:bg-surface-container-low rounded-DEFAULT"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </form>
+    </div>
+  }
+
+  <!-- Menú de navegación móvil: solo en pantallas pequeñas. -->
+  @if (menuMovilAbierto()) {
+    <nav
+      id="menu-movil"
+      aria-label="Navegación principal"
+      class="md:hidden border-t border-outline-variant dark:border-outline bg-surface dark:bg-on-surface"
+    >
+      <div class="flex flex-col gap-0.5 px-margin-mobile py-sm">
+        <a
+          routerLink="/inicio"
+          (click)="cerrarMenuMovil()"
+          class="rounded-lg px-3 py-2.5 font-label-md text-label-md text-secondary hover:bg-surface-container-low hover:text-primary transition-colors"
+        >
+          Inicio
+        </a>
+
+        <!-- Categorías (RF-04) -->
+        <p class="px-3 pt-2 pb-1 font-label-sm text-label-sm uppercase tracking-wider text-secondary">
+          Categorías
+        </p>
+        @for (categoria of categorias(); track categoria.codigo) {
+          <a
+            [routerLink]="['/categoria', categoria.codigo]"
+            (click)="cerrarMenuMovil()"
+            class="rounded-lg px-3 py-2.5 font-label-md text-label-md text-secondary hover:bg-surface-container-low hover:text-primary transition-colors"
+          >
+            {{ categoria.nombre }}
+          </a>
+        }
+
+        <hr class="my-1 border-outline-variant" />
+
+        <a
+          routerLink="/cotizacion"
+          (click)="cerrarMenuMovil()"
+          class="rounded-lg px-3 py-2.5 font-label-md text-label-md text-secondary hover:bg-surface-container-low hover:text-primary transition-colors"
+        >
+          Cotizaciones
+        </a>
+
+        <hr class="my-1 border-outline-variant" />
+
+        @if (estaAutenticado()) {
+          @if (usuario(); as u) {
+            <p class="px-3 py-2 font-label-md text-label-md text-secondary truncate">{{ u.correo }}</p>
+          }
+          <a
+            routerLink="/perfil"
+            (click)="cerrarMenuMovil()"
+            class="rounded-lg px-3 py-2.5 font-label-md text-label-md text-secondary hover:bg-surface-container-low hover:text-primary transition-colors"
+          >
+            Mi perfil
+          </a>
+          <button
+            type="button"
+            (click)="cerrarSesion()"
+            class="rounded-lg px-3 py-2.5 text-left font-label-md text-label-md text-error hover:bg-error-container transition-colors"
+          >
+            Cerrar sesión
+          </button>
+        } @else {
+          <a
+            routerLink="/auth"
+            (click)="cerrarMenuMovil()"
+            class="rounded-lg px-3 py-2.5 font-label-md text-label-md text-secondary hover:bg-surface-container-low hover:text-primary transition-colors"
+          >
+            Iniciar sesión
+          </a>
+        }
+      </div>
+    </nav>
+  }
 </header>

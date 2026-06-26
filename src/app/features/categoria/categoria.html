@@ -11,10 +11,27 @@
     <!-- Grilla de productos con sus estados (cargando / error / vacío / éxito). -->
     <div class="min-w-0 flex-1">
       @if (grilla.isLoading()) {
-        <p class="py-2xl text-center font-body-lg text-secondary">Cargando productos…</p>
+        <!-- Cargando: esqueleto de la grilla (consistente con búsqueda y ofertas). -->
+        <div class="mb-lg h-7 w-48 animate-pulse rounded-DEFAULT bg-surface-container"></div>
+        <div class="grid grid-cols-2 gap-md sm:grid-cols-2 lg:grid-cols-3">
+          @for (s of esqueletos; track $index) {
+            <app-product-card-skeleton />
+          }
+        </div>
       } @else if (grilla.error()) {
-        <div class="rounded-lg border border-error bg-error-container p-md text-on-error-container">
-          No se pudieron cargar los productos. Verifica que el servidor esté disponible.
+        <div
+          class="flex flex-col items-start gap-sm rounded-lg border border-error bg-error-container p-md text-on-error-container"
+        >
+          <p class="font-body-md">
+            No se pudieron cargar los productos. Verifica que el servidor esté disponible.
+          </p>
+          <button
+            type="button"
+            (click)="grilla.reload()"
+            class="rounded-DEFAULT bg-error px-4 py-2 font-label-md text-on-error transition-colors hover:opacity-90"
+          >
+            Reintentar
+          </button>
         </div>
       } @else if (grilla.value(); as data) {
         <header class="mb-lg flex items-end justify-between">

@@ -17,6 +17,7 @@ import { ProductApiService } from '../../core/services/product-api.service';
 import { CartService } from '../../core/services/cart.service';
 import { Categoria as CategoriaModel } from '../../core/models/product.models';
 import { ProductCard } from '../../shared/components/product-card/product-card';
+import { ProductCardSkeleton } from '../../shared/components/product-card-skeleton/product-card-skeleton';
 import { CategoryFilter } from '../../shared/components/category-filter/category-filter';
 
 /**
@@ -29,7 +30,7 @@ import { CategoryFilter } from '../../shared/components/category-filter/category
  */
 @Component({
   selector: 'app-categoria',
-  imports: [ProductCard, CategoryFilter],
+  imports: [ProductCard, ProductCardSkeleton, CategoryFilter],
   templateUrl: './categoria.html',
   styleUrl: './categoria.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,6 +54,9 @@ export class Categoria {
 
   /** Pagina actual de la grilla (RF-11). */
   readonly pagina = signal(1);
+
+  /** Placeholders para el esqueleto de carga (no representan datos). */
+  readonly esqueletos = Array.from({ length: 6 });
 
   constructor() {
     // La URL es la fuente de verdad de la categoria; al cambiar de categoria

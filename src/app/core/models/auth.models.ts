@@ -91,6 +91,12 @@ export interface RegisterResponse {
 /** Identidad del usuario autenticado (GET /auth/me). `id` es el id de usuario. */
 export interface UsuarioActual {
   id: number;
+  /**
+   * Id del cliente asociado (FK clientes.id, 1:1 con el usuario). Lo requiere el
+   * checkout (POST /checkout/). El backend debe incluirlo en la respuesta de /me;
+   * mientras no lo haga llegará `undefined` y el checkout lo manejará con un aviso.
+   */
+  cliente_id?: number;
   correo: string;
   rol: string;
   estado: EstadoCuenta;
