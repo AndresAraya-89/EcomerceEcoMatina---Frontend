@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Observable, finalize, map, shareReplay, switchMap, tap } from 'rxjs';
+import { Observable, catchError, finalize, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
 
 import {
   LoginRequest,
@@ -8,6 +8,7 @@ import {
   TokenResponse,
   UsuarioActual,
 } from '../models/auth.models';
+import { esFalloDeAutenticacion } from '../utils/auth-error';
 import { AuthApiService } from './auth-api.service';
 import { TokenStorageService } from './token-storage.service';
 
@@ -53,8 +54,18 @@ export class AuthService {
 
   constructor() {
     // Si arrancamos con tokens guardados, hidratamos la identidad desde /me.
+    // Solo cerramos la sesion si /me (o su refresh transparente) la rechaza de
+    // verdad (401/403). Ante un fallo transitorio (sin red, 5xx) conservamos los
+    // tokens: siguen siendo validos y volveremos a resolver /me mas tarde. Asi un
+    // arranque en frio al volver de PayPal no desloguea al usuario.
     if (this._sesionActiva()) {
-      this.cargarUsuario().subscribe({ error: () => this.cerrarSesionLocal() });
+      this.cargarUsuario().subscribe({
+        error: (err) => {
+          if (esFalloDeAutenticacion(err)) {
+            this.cerrarSesionLocal();
+          }
+        },
+      });
     }
   }
 
@@ -109,6 +120,16 @@ export class AuthService {
     this.renovacionEnCurso = this.api.refrescar({ refresh_token: refreshToken }).pipe(
       tap((tokens) => this.guardarSesion(tokens)),
       map((tokens) => tokens.access_token),
+      catchError((error: unknown) => {
+        // El backend rechazo el refresh (token rotado/vencido/revocado): la
+        // sesion termino y hay que cerrarla. Ante un fallo transitorio (sin red,
+        // 5xx) NO cerramos: conservamos los tokens para reintentar sin obligar a
+        // re-login (clave al volver de PayPal). El interceptor solo propaga.
+        if (esFalloDeAutenticacion(error)) {
+          this.cerrarSesionLocal();
+        }
+        return throwError(() => error);
+      }),
       finalize(() => (this.renovacionEnCurso = null)),
       shareReplay(1),
     );

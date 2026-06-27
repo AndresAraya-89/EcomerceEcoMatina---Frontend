@@ -1,5 +1,14 @@
 <section class="max-w-[42rem] mx-auto w-full px-margin-mobile md:px-margin-desktop py-2xl">
-  @if (token() === '') {
+  @if (enPopup) {
+    <!-- Dentro de la ventana emergente: al confirmar, se avisa a la pestaña
+         original y la ventana se cierra sola. Solo mostramos un mensaje breve. -->
+    <div class="flex flex-col items-center gap-md py-xl text-center">
+      <span class="material-symbols-outlined animate-spin text-5xl text-primary" aria-hidden="true">
+        progress_activity
+      </span>
+      <p class="font-body-lg text-on-surface">Confirmando tu pago con PayPal…</p>
+    </div>
+  } @else if (token() === '') {
     <!-- Llegada sin token: no hay nada que capturar. -->
     <div class="flex flex-col items-center gap-sm text-center">
       <span class="material-symbols-outlined text-6xl text-error" aria-hidden="true">error</span>

@@ -95,7 +95,7 @@ describe('authInterceptor', () => {
     expect(auth.renovarSesion).toHaveBeenCalledTimes(1);
   });
 
-  it('si la renovacion falla, cierra la sesion local y propaga el error', () => {
+  it('si la renovacion falla, propaga el error (el cierre de sesion lo decide AuthService)', () => {
     storage.accessToken.and.returnValue('viejo');
     auth.renovarSesion.and.returnValue(throwError(() => new Error('sesion expirada')));
 
@@ -106,7 +106,8 @@ describe('authInterceptor', () => {
     req.flush(null, { status: 401, statusText: 'Unauthorized' });
 
     expect(errorRecibido).toBeTrue();
-    expect(auth.cerrarSesionLocal).toHaveBeenCalled();
+    // El interceptor ya no cierra sesion: esa decision vive en renovarSesion.
+    expect(auth.cerrarSesionLocal).not.toHaveBeenCalled();
   });
 
   it('un error que no es 401 se propaga sin intentar renovar', () => {
