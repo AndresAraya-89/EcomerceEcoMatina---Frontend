@@ -1,0 +1,7 @@
+/* Logo del header. Ajustá `height` para agrandar o achicar el logo. */
+.logo-header {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 100%;
+}
