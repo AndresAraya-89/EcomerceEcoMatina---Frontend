@@ -27,36 +27,43 @@
         </div>
       </dl>
 
-      @if (detallesPago().length > 0) {
+      @if (instruccionesPago(); as instrucciones) {
         <hr class="my-md border-outline-variant" />
         <h2 class="mb-sm font-title-md text-title-md text-on-surface">Instrucciones de pago</h2>
-        <dl class="flex flex-col gap-2">
-          @for (detalle of detallesPago(); track detalle[0]) {
-            <div class="flex items-start justify-between gap-md">
-              <dt class="font-label-md text-secondary capitalize">{{ detalle[0] }}</dt>
-              <dd class="font-label-md text-right text-on-surface break-all">{{ detalle[1] }}</dd>
-            </div>
-          }
-        </dl>
+        <p class="font-body-md text-on-surface-variant">{{ instrucciones }}</p>
       }
     </div>
 
-    <div class="mt-lg flex flex-col gap-sm sm:flex-row">
-      <a
-        [href]="urlPdf(pedido.numero_orden)"
-        target="_blank"
-        rel="noopener"
-        class="flex flex-1 items-center justify-center gap-2 rounded-full border border-outline px-6 py-3 font-label-lg text-on-surface transition hover:bg-surface-container-low"
-      >
-        <span class="material-symbols-outlined" aria-hidden="true">download</span>
-        Descargar comprobante (PDF)
-      </a>
-      <a
-        routerLink="/inicio"
-        class="flex flex-1 items-center justify-center rounded-full bg-primary px-6 py-3 font-label-lg text-on-primary transition hover:opacity-90"
-      >
-        Seguir comprando
-      </a>
+    <div class="mt-lg flex flex-col gap-sm">
+      <!-- PayPal: la acción principal es ir a la pasarela a aprobar el pago. -->
+      @if (accionPago() === 'PAYMENT_GATEWAY_REDIRECT' && urlPasarela(); as url) {
+        <!-- Redirección en la MISMA pestaña: así PayPal vuelve al return_url dentro de la app. -->
+        <a
+          [href]="url"
+          class="flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-label-lg text-on-primary transition hover:opacity-90"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+          Continuar a PayPal para pagar
+        </a>
+      }
+
+      <div class="flex flex-col gap-sm sm:flex-row">
+        <a
+          [href]="urlPdf(pedido.numero_orden)"
+          target="_blank"
+          rel="noopener"
+          class="flex flex-1 items-center justify-center gap-2 rounded-full border border-outline px-6 py-3 font-label-lg text-on-surface transition hover:bg-surface-container-low"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">download</span>
+          Descargar comprobante (PDF)
+        </a>
+        <a
+          routerLink="/inicio"
+          class="flex flex-1 items-center justify-center rounded-full border border-outline px-6 py-3 font-label-lg text-on-surface transition hover:bg-surface-container-low"
+        >
+          Seguir comprando
+        </a>
+      </div>
     </div>
   } @else if (vacio()) {
     <!-- Sin ítems que cobrar. -->

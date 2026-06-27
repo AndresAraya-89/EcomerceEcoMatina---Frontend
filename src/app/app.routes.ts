@@ -30,6 +30,18 @@ export const routes: Routes = [
         loadComponent: () => import('./features/checkout/checkout').then((m) => m.Checkout),
         canActivate: [authGuard],
     },
+    // Retorno de PayPal: captura el pago aprobado (destino de PAYPAL_RETURN_URL)
+    {
+        path: 'checkout/paypal/return',
+        loadComponent: () =>
+            import('./features/checkout/paypal-return/paypal-return').then((m) => m.PaypalReturn),
+    },
+    // Cancelación de PayPal (destino de PAYPAL_CANCEL_URL)
+    {
+        path: 'checkout/paypal/cancel',
+        loadComponent: () =>
+            import('./features/checkout/paypal-cancel/paypal-cancel').then((m) => m.PaypalCancel),
+    },
     {
         path: 'cotizacion',
         loadComponent: () => import('./features/cotizacion/cotizacion').then((m) => m.Cotizacion),

@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { PedidoCreate, PedidoOut } from '../models/checkout.models';
+import { CapturaPaypalRequest, PedidoCreate, PedidoOut } from '../models/checkout.models';
 
 /**
  * Acceso HTTP al módulo `checkout` del backend.
@@ -21,6 +21,18 @@ export class CheckoutApiService {
   crearPedido(payload: PedidoCreate): Observable<PedidoOut> {
     return this.http
       .post<PedidoOut>(`${this.baseUrl}/`, payload)
+      .pipe(map((p) => ({ ...p, total: Number(p.total) })));
+  }
+
+  /**
+   * POST /checkout/paypal/capturar — captura (cobra) la orden aprobada en PayPal
+   * y confirma el pedido. `paypalOrderId` es el token con que PayPal redirige al
+   * return_url.
+   */
+  capturarPagoPaypal(paypalOrderId: string): Observable<PedidoOut> {
+    const payload: CapturaPaypalRequest = { paypal_order_id: paypalOrderId };
+    return this.http
+      .post<PedidoOut>(`${this.baseUrl}/paypal/capturar`, payload)
       .pipe(map((p) => ({ ...p, total: Number(p.total) })));
   }
 

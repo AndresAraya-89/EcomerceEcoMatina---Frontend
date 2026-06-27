@@ -23,12 +23,32 @@ export interface PedidoCreate {
   items: ItemCheckout[];
 }
 
+/** Payload de POST /checkout/paypal/capturar (token con que PayPal vuelve al return_url). */
+export interface CapturaPaypalRequest {
+  paypal_order_id: string;
+}
+
+/**
+ * Acción que el frontend debe ejecutar tras crear el pedido, según el método:
+ * - WHATSAPP_REDIRECT (SINPE): mostrar instrucciones para enviar el comprobante.
+ * - PAYMENT_GATEWAY_REDIRECT (PayPal): redirigir a `url_pasarela` para aprobar.
+ */
+export type AccionPago = 'WHATSAPP_REDIRECT' | 'PAYMENT_GATEWAY_REDIRECT';
+
+/** Instrucciones de pago que devuelve el backend (varían por método). */
+export interface DetallesPago {
+  accion?: AccionPago;
+  instrucciones?: string;
+  url_pasarela?: string;
+  numero_orden_referencia?: string;
+  [clave: string]: unknown;
+}
+
 /** Respuesta de POST /checkout/: pedido creado + instrucciones de pago. */
 export interface PedidoOut {
   numero_orden: string;
   estado: string;
   total: number;
   mensaje: string;
-  /** Instrucciones de pago según el método (p. ej. número SINPE o enlace PayPal). */
-  detalles_pago: Record<string, unknown>;
+  detalles_pago: DetallesPago;
 }

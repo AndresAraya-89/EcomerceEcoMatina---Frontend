@@ -1,0 +1,24 @@
+<section class="max-w-[42rem] mx-auto w-full px-margin-mobile md:px-margin-desktop py-2xl">
+  <div class="flex flex-col items-center gap-sm text-center">
+    <span class="material-symbols-outlined text-6xl text-secondary" aria-hidden="true">cancel</span>
+    <h1 class="font-headline-md text-headline-md font-bold text-on-surface">Pago cancelado</h1>
+    <p class="font-body-md text-secondary">
+      Cancelaste el pago en PayPal. Tu pedido no se completó; podés intentarlo de nuevo cuando
+      quieras.
+    </p>
+    <div class="mt-sm flex flex-col gap-sm sm:flex-row">
+      <a
+        routerLink="/checkout"
+        class="rounded-full bg-primary px-6 py-2 text-center font-label-lg text-on-primary transition hover:opacity-90"
+      >
+        Reintentar el pago
+      </a>
+      <a
+        routerLink="/cart"
+        class="rounded-full border border-outline px-6 py-2 text-center font-label-lg text-on-surface transition hover:bg-surface-container-low"
+      >
+        Volver al carrito
+      </a>
+    </div>
+  </div>
+</section>

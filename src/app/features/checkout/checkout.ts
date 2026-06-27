@@ -44,11 +44,12 @@ export class Checkout {
   readonly resultado = signal<PedidoOut | null>(null);
   readonly errorEnvio = signal<string | null>(null);
 
-  /** Instrucciones de pago como pares clave/valor para listarlas en la vista. */
-  readonly detallesPago = computed(() => {
-    const r = this.resultado();
-    return r ? Object.entries(r.detalles_pago) : [];
-  });
+  /** Acción de pago indicada por el backend (redirección PayPal / instrucciones SINPE). */
+  readonly accionPago = computed(() => this.resultado()?.detalles_pago.accion ?? null);
+  /** URL de la pasarela (PayPal) a la que se debe redirigir para aprobar el pago. */
+  readonly urlPasarela = computed(() => this.resultado()?.detalles_pago.url_pasarela ?? null);
+  /** Instrucciones para completar el pago fuera de línea (SINPE). */
+  readonly instruccionesPago = computed(() => this.resultado()?.detalles_pago.instrucciones ?? null);
 
   seleccionarMetodo(metodo: MetodoPago): void {
     this.metodoPago.set(metodo);
