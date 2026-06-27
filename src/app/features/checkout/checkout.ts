@@ -5,7 +5,11 @@ import { RouterLink } from '@angular/router';
 import { CartService } from '../../core/services/cart.service';
 import { AuthService } from '../../core/services/auth.service';
 import { CheckoutApiService } from '../../core/services/checkout-api.service';
+import { PaypalPopupService } from '../../core/services/paypal-popup.service';
 import { MetodoPago, PedidoCreate, PedidoOut } from '../../core/models/checkout.models';
+
+/** Estado del pago con PayPal mientras se usa la ventana emergente. */
+type EstadoPaypal = 'inactivo' | 'esperando' | 'completado' | 'cancelado' | 'error';
 
 /**
  * Página de checkout (CU de compra): convierte el carrito en un pedido.
@@ -27,6 +31,7 @@ export class Checkout {
   private readonly cart = inject(CartService);
   private readonly auth = inject(AuthService);
   private readonly api = inject(CheckoutApiService);
+  private readonly paypal = inject(PaypalPopupService);
 
   readonly items = this.cart.items;
   readonly total = this.cart.totalGeneral;
@@ -51,8 +56,41 @@ export class Checkout {
   /** Instrucciones para completar el pago fuera de línea (SINPE). */
   readonly instruccionesPago = computed(() => this.resultado()?.detalles_pago.instrucciones ?? null);
 
+  /** Estado del pago con PayPal a través de la ventana emergente. */
+  readonly estadoPaypal = signal<EstadoPaypal>('inactivo');
+  /** True si el navegador bloqueó la ventana emergente (mostrar enlace alterno). */
+  readonly popupBloqueado = signal(false);
+
   seleccionarMetodo(metodo: MetodoPago): void {
     this.metodoPago.set(metodo);
+  }
+
+  /**
+   * Abre la pasarela de PayPal en una ventana emergente y reacciona al resultado
+   * sin abandonar esta pestaña (así no se reinicia la app ni se arriesga la sesión).
+   * Si el navegador bloquea la ventana, deja el enlace directo como plan B.
+   */
+  pagarConPaypal(url: string): void {
+    this.popupBloqueado.set(false);
+    this.estadoPaypal.set('esperando');
+
+    this.paypal.abrir(url).subscribe((resultado) => {
+      switch (resultado) {
+        case 'completado':
+          this.estadoPaypal.set('completado');
+          break;
+        case 'cancelado':
+          this.estadoPaypal.set('cancelado');
+          break;
+        case 'error':
+          this.estadoPaypal.set('error');
+          break;
+        case 'bloqueado':
+          this.estadoPaypal.set('inactivo');
+          this.popupBloqueado.set(true);
+          break;
+      }
+    });
   }
 
   urlPdf(numeroOrden: string): string {

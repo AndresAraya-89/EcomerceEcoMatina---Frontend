@@ -1,4 +1,8 @@
 <section class="max-w-[42rem] mx-auto w-full px-margin-mobile md:px-margin-desktop py-2xl">
+  @if (enPopup) {
+    <!-- Dentro del popup: ya avisamos la cancelación y la ventana se cierra sola. -->
+    <p class="text-center font-body-md text-secondary">Cerrando…</p>
+  } @else {
   <div class="flex flex-col items-center gap-sm text-center">
     <span class="material-symbols-outlined text-6xl text-secondary" aria-hidden="true">cancel</span>
     <h1 class="font-headline-md text-headline-md font-bold text-on-surface">Pago cancelado</h1>
@@ -21,4 +25,5 @@
       </a>
     </div>
   </div>
+  }
 </section>

@@ -35,16 +35,57 @@
     </div>
 
     <div class="mt-lg flex flex-col gap-sm">
-      <!-- PayPal: la acción principal es ir a la pasarela a aprobar el pago. -->
+      <!-- PayPal: la pasarela se abre en una ventana emergente; la app sigue en
+           esta pestaña para no reiniciarse ni arriesgar la sesión. -->
       @if (accionPago() === 'PAYMENT_GATEWAY_REDIRECT' && urlPasarela(); as url) {
-        <!-- Redirección en la MISMA pestaña: así PayPal vuelve al return_url dentro de la app. -->
-        <a
-          [href]="url"
-          class="flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-label-lg text-on-primary transition hover:opacity-90"
-        >
-          <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
-          Continuar a PayPal para pagar
-        </a>
+        @if (estadoPaypal() === 'completado') {
+          <div
+            class="flex items-center justify-center gap-2 rounded-full bg-primary-container px-6 py-3 font-label-lg text-on-primary-container"
+            role="status"
+          >
+            <span class="material-symbols-outlined filled" aria-hidden="true">check_circle</span>
+            Pago confirmado con PayPal
+          </div>
+        } @else {
+          <button
+            type="button"
+            (click)="pagarConPaypal(url)"
+            [disabled]="estadoPaypal() === 'esperando'"
+            class="flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-label-lg text-on-primary transition hover:opacity-90 disabled:opacity-50"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">account_balance_wallet</span>
+            @if (estadoPaypal() === 'esperando') {
+              Esperando el pago en PayPal…
+            } @else {
+              Pagar con PayPal
+            }
+          </button>
+
+          @if (estadoPaypal() === 'cancelado') {
+            <p class="text-center font-body-md text-secondary">
+              Cancelaste el pago. Podés volver a intentarlo cuando quieras.
+            </p>
+          }
+          @if (estadoPaypal() === 'error') {
+            <p class="text-center font-body-md text-error" role="alert">
+              No se pudo confirmar el pago. Si el cargo se realizó, contactá a soporte; podés
+              reintentar.
+            </p>
+          }
+          @if (popupBloqueado()) {
+            <p class="text-center font-body-md text-secondary">
+              Tu navegador bloqueó la ventana de PayPal.
+              <a
+                [href]="url"
+                target="_blank"
+                rel="noopener"
+                class="font-bold text-primary underline"
+              >
+                Abrir PayPal en una pestaña nueva
+              </a>
+            </p>
+          }
+        }
       }
 
       <div class="flex flex-col gap-sm sm:flex-row">
