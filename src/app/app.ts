@@ -4,10 +4,11 @@ import { Footer } from "./shared/components/footer/footer";
 import { Header } from "./shared/components/header/header";
 import { Toast } from "./shared/components/toast/toast";
 import { WhatsappButton } from "./shared/components/whatsapp-button/whatsapp-button";
+import { ChatbotWidget } from "./shared/components/chatbot-widget/chatbot-widget";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Footer, Header, Toast, WhatsappButton],
+  imports: [RouterOutlet, Footer, Header, Toast, WhatsappButton, ChatbotWidget],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
