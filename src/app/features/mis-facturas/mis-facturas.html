@@ -1,0 +1,122 @@
+<section class="px-margin-mobile md:px-margin-desktop py-xl max-w-max-width mx-auto w-full">
+  <header class="mb-lg">
+    <h1 class="font-headline-md text-headline-md font-bold text-on-surface">Mis facturas</h1>
+    <p class="mt-1 font-body-md text-secondary">Historial de tus compras en AgroMatina.</p>
+  </header>
+
+  @if (listado.isLoading()) {
+    <p class="py-xl text-center font-body-md text-secondary">Cargando tus facturas…</p>
+  } @else if (listado.error()) {
+    <div class="rounded-lg border border-error bg-error-container p-md text-on-error-container">
+      <p class="font-label-md">No se pudieron cargar tus facturas. Intenta de nuevo.</p>
+    </div>
+  } @else if (facturas().length === 0) {
+    <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-xl text-center">
+      <div class="text-4xl">🧾</div>
+      <p class="mt-sm font-body-md text-on-surface">Aún no tienes facturas.</p>
+      <p class="font-body-md text-secondary">Cuando completes una compra, aparecerá aquí.</p>
+    </div>
+  } @else {
+    <!-- Tabla (escritorio) -->
+    <div class="hidden overflow-x-auto rounded-xl border border-outline-variant md:block">
+      <table class="w-full text-left font-body-md">
+        <thead class="bg-surface-container-low text-secondary">
+          <tr>
+            <th class="px-4 py-3 font-label-md">N.º de orden</th>
+            <th class="px-4 py-3 font-label-md">Fecha</th>
+            <th class="px-4 py-3 font-label-md">Método</th>
+            <th class="px-4 py-3 font-label-md">Estado</th>
+            <th class="px-4 py-3 text-right font-label-md">Total</th>
+            <th class="px-4 py-3 text-right font-label-md">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (f of facturas(); track f.numero_orden) {
+            <tr class="border-t border-outline-variant hover:bg-surface-container-low transition-colors">
+              <td class="px-4 py-3 font-label-md text-on-surface">{{ f.numero_orden }}</td>
+              <td class="px-4 py-3 text-on-surface-variant">{{ f.fecha_emision | date: 'dd/MM/yyyy' }}</td>
+              <td class="px-4 py-3 text-on-surface-variant">{{ f.metodo_pago | titlecase }}</td>
+              <td class="px-4 py-3 text-on-surface-variant">{{ f.estado | titlecase }}</td>
+              <td class="px-4 py-3 text-right font-label-md text-on-surface">
+                {{ f.total | currency: 'CRC' : 'symbol-narrow' }}
+              </td>
+              <td class="px-4 py-3 text-right">
+                <button
+                  type="button"
+                  (click)="abrirDetalle(f.numero_orden)"
+                  class="rounded-full border border-primary px-4 py-1.5 font-label-sm text-primary hover:bg-primary-container hover:text-on-primary transition-colors"
+                >
+                  Ver detalle
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tarjetas (móvil) -->
+    <div class="flex flex-col gap-sm md:hidden">
+      @for (f of facturas(); track f.numero_orden) {
+        <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-md">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <p class="font-label-md text-on-surface">{{ f.numero_orden }}</p>
+              <p class="font-body-sm text-secondary">{{ f.fecha_emision | date: 'dd/MM/yyyy' }}</p>
+            </div>
+            <p class="font-title-sm font-bold text-primary">
+              {{ f.total | currency: 'CRC' : 'symbol-narrow' }}
+            </p>
+          </div>
+          <div class="mt-2 flex items-center justify-between">
+            <p class="font-body-sm text-on-surface-variant">
+              {{ f.metodo_pago | titlecase }} · {{ f.estado | titlecase }}
+            </p>
+            <button
+              type="button"
+              (click)="abrirDetalle(f.numero_orden)"
+              class="rounded-full border border-primary px-4 py-1.5 font-label-sm text-primary hover:bg-primary-container hover:text-on-primary transition-colors"
+            >
+              Ver detalle
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Paginación (RF-11) -->
+    @if (totalPaginas() > 1) {
+      <div class="mt-lg flex items-center justify-center gap-md">
+        <button
+          type="button"
+          (click)="paginaPrevia()"
+          [disabled]="!hayPaginaPrevia()"
+          class="rounded-full border border-outline px-4 py-2 font-label-md text-on-surface hover:bg-surface-container-low transition disabled:opacity-40"
+        >
+          Anterior
+        </button>
+        <span class="font-label-md text-secondary">Página {{ pagina() }} de {{ totalPaginas() }}</span>
+        <button
+          type="button"
+          (click)="paginaSiguiente()"
+          [disabled]="!hayPaginaSiguiente()"
+          class="rounded-full border border-outline px-4 py-2 font-label-md text-on-surface hover:bg-surface-container-low transition disabled:opacity-40"
+        >
+          Siguiente
+        </button>
+      </div>
+    }
+  }
+</section>
+
+<!-- Modal de detalle (RF-44) -->
+@if (ordenSeleccionada()) {
+  <app-factura-detalle
+    [detalle]="detalle.value() ?? null"
+    [cargando]="detalle.isLoading()"
+    [descargando]="descargando()"
+    [error]="errorModal()"
+    (cerrar)="cerrarDetalle()"
+    (descargar)="descargarPdf(ordenSeleccionada()!)"
+  />
+}

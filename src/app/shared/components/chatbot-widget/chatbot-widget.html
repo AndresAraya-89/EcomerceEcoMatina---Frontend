@@ -1,0 +1,98 @@
+<!-- Botón flotante de chat -->
+<button
+  type="button"
+  (click)="alternar()"
+  [attr.aria-expanded]="abierto()"
+  aria-label="Abrir asistente virtual"
+  class="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-on-primary shadow-lg transition hover:opacity-90"
+>
+  <span class="material-symbols-outlined">{{ abierto() ? 'close' : 'chat' }}</span>
+</button>
+
+@if (abierto()) {
+  <section
+    role="dialog"
+    aria-label="Asistente virtual de AgroMatina"
+    class="fixed bottom-24 right-6 z-50 flex h-[500px] max-h-[70vh] w-[360px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-xl border border-outline-variant bg-surface shadow-xl dark:bg-on-surface"
+  >
+    <!-- Encabezado -->
+    <header class="flex items-center justify-between gap-sm bg-primary px-md py-sm text-on-primary">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined filled" aria-hidden="true">support_agent</span>
+        <span class="font-title-md text-title-md">Asistente AgroMatina</span>
+      </div>
+      <button type="button" (click)="cerrar()" aria-label="Cerrar el chat" class="p-1 hover:opacity-80">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+
+    <!-- Mensajes -->
+    <div #cuerpo class="flex flex-1 flex-col gap-sm overflow-y-auto p-md">
+      @if (mensajes().length === 0) {
+        <p class="font-body-md text-on-surface-variant">
+          ¡Hola! Soy el asistente de AgroMatina. ¿En qué te puedo ayudar?
+        </p>
+        <div class="flex flex-wrap gap-2">
+          @for (sugerencia of sugerencias; track sugerencia) {
+            <button
+              type="button"
+              (click)="enviar(sugerencia)"
+              class="rounded-full border border-outline px-3 py-1 font-label-sm text-label-sm text-on-surface transition-colors hover:bg-surface-container-low"
+            >
+              {{ sugerencia }}
+            </button>
+          }
+        </div>
+      }
+
+      @for (m of mensajes(); track $index) {
+        <div
+          class="max-w-[80%] rounded-xl px-3 py-2 font-body-md text-body-md whitespace-pre-line"
+          [class.self-end]="m.rol === 'user'"
+          [class.bg-primary-container]="m.rol === 'user'"
+          [class.text-on-primary-container]="m.rol === 'user'"
+          [class.self-start]="m.rol === 'assistant'"
+          [class.bg-surface-container]="m.rol === 'assistant'"
+          [class.text-on-surface]="m.rol === 'assistant'"
+        >
+          {{ m.texto }}
+        </div>
+      }
+
+      @if (enviando()) {
+        <div
+          class="flex items-center gap-2 self-start rounded-xl bg-surface-container px-3 py-2 text-on-surface-variant"
+        >
+          <span class="material-symbols-outlined animate-spin text-[18px]" aria-hidden="true">
+            progress_activity
+          </span>
+          <span class="font-body-md">Escribiendo…</span>
+        </div>
+      }
+    </div>
+
+    <!-- Entrada -->
+    <form
+      (submit)="enviar(borrador()); $event.preventDefault()"
+      class="flex items-center gap-sm border-t border-outline-variant p-sm"
+    >
+      <input
+        type="text"
+        [value]="borrador()"
+        (input)="actualizarBorrador($event)"
+        [disabled]="enviando()"
+        placeholder="Escribí tu pregunta…"
+        aria-label="Mensaje para el asistente"
+        class="flex-1 bg-transparent px-2 py-2 font-body-md text-on-surface outline-none placeholder:text-secondary"
+      />
+      <button
+        type="submit"
+        [disabled]="enviando() || borrador().trim() === ''"
+        aria-label="Enviar mensaje"
+        class="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-on-primary transition hover:opacity-90 disabled:opacity-40"
+      >
+        <span class="material-symbols-outlined text-[20px]">send</span>
+      </button>
+    </form>
+  </section>
+}

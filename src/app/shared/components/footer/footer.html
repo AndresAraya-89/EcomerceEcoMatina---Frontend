@@ -6,17 +6,11 @@
   >
     <!-- Brand Column -->
     <div class="flex flex-col gap-sm">
-      <div
-        class="font-headline-md text-headline-md text-surface-bright flex items-center gap-2 mb-2"
-      >
-        <span
-          class="material-symbols-outlined filled"
-          data-icon="agriculture"
-          style="font-variation-settings: 'FILL' 1"
-          >agriculture</span
-        >
-        Agromatina
-      </div>
+      <img
+        src="logo_agromatina.jpeg"
+        alt="Agromatina Ferretería"
+        class="h-14 w-14 rounded-full object-cover mb-2"
+      />
       <p class="font-body-md text-body-md text-tertiary-fixed-dim w-full max-w-[24rem]">
         Soluciones tecnológicas y mecánicas para la agricultura moderna. Rendimiento, durabilidad y
         confianza profesional.
@@ -32,10 +26,14 @@
           data-icon="email"
           >email</span
         >
-        <span
+        <a
+          [href]="wazeUrl"
+          target="_blank"
+          rel="noopener"
+          aria-label="Ver ubicación en Waze"
           class="material-symbols-outlined cursor-pointer hover:text-primary-fixed-dim transition-colors"
           data-icon="location_on"
-          >location_on</span
+          >location_on</a
         >
       </div>
     </div>
@@ -88,7 +86,9 @@
         >
         <a
           class="font-label-md text-label-md text-tertiary-fixed hover:text-surface-bright hover:text-primary-fixed-dim transition-colors focus:ring-2 focus:ring-primary-fixed outline-none rounded-sm w-max"
-          href="#"
+          [href]="whatsappUrl"
+          target="_blank"
+          rel="noopener"
           >Contacto</a
         >
       </nav>

@@ -86,6 +86,12 @@ export const routes: Routes = [
         loadComponent: () => import('./features/perfil/perfil').then((m) => m.Perfil),
         canActivate: [authGuard],
     },
+    // Mis Facturas (RF-42..45) — protegida: el cliente solo ve sus facturas
+    {
+        path: 'mis-facturas',
+        loadComponent: () => import('./features/mis-facturas/mis-facturas').then((m) => m.MisFacturas),
+        canActivate: [authGuard],
+    },
 
     // Cualquier ruta desconocida vuelve al inicio (las antiguas paginas
     // estaticas de categoria fueron reemplazadas por /categoria/:codigo).
