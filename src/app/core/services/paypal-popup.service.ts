@@ -78,10 +78,11 @@ export class PaypalPopupService {
       };
 
       canal.onmessage = (evento: MessageEvent<ResultadoPaypal>) => {
-        resolver(evento.data);
+        // Cerramos la ventana antes de resolver (el popup ya hizo su trabajo).
         if (!ventana.closed) {
           ventana.close();
         }
+        resolver(evento.data);
       };
 
       // Plan B: si el usuario cierra la ventana sin completar el pago, no llega

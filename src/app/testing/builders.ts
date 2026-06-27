@@ -13,6 +13,7 @@
  */
 import { CartItem, ItemValidadoResponse, ResumenCarritoResponse } from '../core/models/cart.models';
 import { TokenResponse, UsuarioActual } from '../core/models/auth.models';
+import { PedidoOut } from '../core/models/checkout.models';
 
 /** Item del carrito tal como lo guarda el frontend. */
 export function buildCartItem(overrides: Partial<CartItem> = {}): CartItem {
@@ -81,6 +82,25 @@ export function buildUsuarioActual(overrides: Partial<UsuarioActual> = {}): Usua
     correo: 'cliente@ejemplo.com',
     rol: 'cliente',
     estado: 'verificada',
+    ...overrides,
+  };
+}
+
+/**
+ * Pedido devuelto por POST /checkout/ o /checkout/paypal/capturar. Por defecto
+ * arma un pedido PayPal con la accion de redireccion a la pasarela; usar
+ * `overrides` para escenarios SINPE o estados distintos.
+ */
+export function buildPedidoOut(overrides: Partial<PedidoOut> = {}): PedidoOut {
+  return {
+    numero_orden: 'ORD-0001',
+    estado: 'pendiente_pago',
+    total: 100,
+    mensaje: 'Pedido creado. Continua el pago en PayPal.',
+    detalles_pago: {
+      accion: 'PAYMENT_GATEWAY_REDIRECT',
+      url_pasarela: 'https://www.sandbox.paypal.com/checkoutnow?token=ORDER123',
+    },
     ...overrides,
   };
 }
