@@ -1,0 +1,138 @@
+<!-- Overlay: cerrar al hacer clic fuera del panel -->
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+  (click)="cerrar.emit()"
+>
+  <!-- Panel: el rondeo + recorte van afuera; el scroll y el padding, adentro,
+       para que la barra de scroll no "cuadre" las esquinas. -->
+  <div
+    class="w-full max-w-[42rem] overflow-hidden rounded-xl bg-surface-container-lowest shadow-xl"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="max-h-[90vh] overflow-y-auto p-lg md:p-xl">
+    <header class="mb-md flex items-start justify-between gap-4">
+      <div>
+        <h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">
+          Detalle de factura
+        </h2>
+        @if (detalle(); as f) {
+          <p class="mt-1 font-label-md text-secondary">Orden {{ f.numero_orden }}</p>
+        }
+      </div>
+      <button
+        type="button"
+        (click)="cerrar.emit()"
+        aria-label="Cerrar"
+        class="rounded-full p-1 text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors"
+      >
+        <span class="material-symbols-outlined" data-icon="close">close</span>
+      </button>
+    </header>
+
+    @if (error(); as msg) {
+      <div class="mb-md rounded-lg border border-error bg-error-container p-md text-on-error-container">
+        <p class="font-label-md">{{ msg }}</p>
+      </div>
+    }
+
+    @if (cargando()) {
+      <p class="py-xl text-center font-body-md text-secondary">Cargando detalle…</p>
+    } @else if (detalle(); as f) {
+      <!-- Resumen -->
+      <div class="grid grid-cols-2 gap-sm rounded-lg bg-surface-container-low p-md md:grid-cols-4">
+        <div>
+          <p class="font-label-sm text-secondary">Fecha</p>
+          <p class="font-body-md text-on-surface">{{ f.fecha_emision | date: 'dd/MM/yyyy HH:mm' }}</p>
+        </div>
+        <div>
+          <p class="font-label-sm text-secondary">Método de pago</p>
+          <p class="font-body-md text-on-surface">{{ f.metodo_pago | titlecase }}</p>
+        </div>
+        <div>
+          <p class="font-label-sm text-secondary">Estado</p>
+          <p class="font-body-md text-on-surface">{{ f.estado | titlecase }}</p>
+        </div>
+        <div>
+          <p class="font-label-sm text-secondary">Total</p>
+          <p class="font-title-md font-bold text-primary">
+            {{ f.total | currency: 'CRC' : 'symbol-narrow' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Cliente -->
+      <h3 class="mt-lg mb-sm font-title-sm text-title-sm font-semibold text-on-surface">Cliente</h3>
+      <div class="grid grid-cols-1 gap-1 font-body-md text-on-surface-variant md:grid-cols-2">
+        <p><span class="text-secondary">Nombre:</span> {{ f.cliente.nombre_completo }}</p>
+        <p>
+          <span class="text-secondary">Identificación:</span>
+          {{ f.cliente.tipo_identificacion | titlecase }} {{ f.cliente.numero_identificacion }}
+        </p>
+        <p><span class="text-secondary">Correo:</span> {{ f.cliente.correo }}</p>
+        <p><span class="text-secondary">Teléfono:</span> {{ f.cliente.telefono }}</p>
+        @if (f.cliente.direccion) {
+          <p class="md:col-span-2"><span class="text-secondary">Dirección:</span> {{ f.cliente.direccion }}</p>
+        }
+      </div>
+
+      <!-- Productos -->
+      <h3 class="mt-lg mb-sm font-title-sm text-title-sm font-semibold text-on-surface">Productos</h3>
+      <div class="overflow-x-auto rounded-lg border border-outline-variant">
+        <table class="w-full text-left font-body-sm">
+          <thead class="bg-surface-container-low text-secondary">
+            <tr>
+              <th class="px-3 py-2 font-label-sm">Producto</th>
+              <th class="px-3 py-2 text-right font-label-sm">Cant.</th>
+              <th class="px-3 py-2 text-right font-label-sm">P. unit.</th>
+              <th class="px-3 py-2 text-right font-label-sm">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of f.productos; track p.producto_codigo) {
+              <tr class="border-t border-outline-variant">
+                <td class="px-3 py-2 text-on-surface">{{ p.producto_nombre }}</td>
+                <td class="px-3 py-2 text-right text-on-surface-variant">{{ p.cantidad }}</td>
+                <td class="px-3 py-2 text-right text-on-surface-variant">
+                  {{ p.precio_unitario | currency: 'CRC' : 'symbol-narrow' }}
+                </td>
+                <td class="px-3 py-2 text-right text-on-surface">
+                  {{ p.subtotal | currency: 'CRC' : 'symbol-narrow' }}
+                </td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr class="border-t border-outline">
+              <td colspan="3" class="px-3 py-2 text-right font-label-md text-secondary">Total</td>
+              <td class="px-3 py-2 text-right font-title-sm font-bold text-primary">
+                {{ f.total | currency: 'CRC' : 'symbol-narrow' }}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Acciones -->
+      <div class="mt-lg flex justify-end gap-sm">
+        <button
+          type="button"
+          (click)="cerrar.emit()"
+          class="rounded-full border border-outline px-6 py-2.5 font-label-md text-on-surface hover:bg-surface-container-low transition-colors"
+        >
+          Cerrar
+        </button>
+        @if (f.pdf_disponible) {
+          <button
+            type="button"
+            (click)="descargar.emit()"
+            [disabled]="descargando()"
+            class="rounded-full bg-primary px-6 py-2.5 font-label-md text-on-primary hover:opacity-90 transition disabled:opacity-50"
+          >
+            @if (descargando()) { Descargando… } @else { Descargar PDF }
+          </button>
+        }
+      </div>
+    }
+    </div>
+  </div>
+</div>

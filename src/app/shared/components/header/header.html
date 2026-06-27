@@ -111,6 +111,13 @@
               >
                 Mi perfil
               </a>
+              <a
+                routerLink="/mis-facturas"
+                (click)="cerrarCuenta()"
+                class="w-full rounded-lg px-4 py-2.5 text-left font-label-md text-label-md text-secondary hover:bg-surface-container-low hover:text-primary transition-colors"
+              >
+                Mis facturas
+              </a>
               <hr class="my-1 border-outline-variant" />
               <button
                 type="button"
@@ -222,6 +229,13 @@
             class="rounded-lg px-3 py-2.5 font-label-md text-label-md text-secondary hover:bg-surface-container-low hover:text-primary transition-colors"
           >
             Mi perfil
+          </a>
+          <a
+            routerLink="/mis-facturas"
+            (click)="cerrarMenuMovil()"
+            class="rounded-lg px-3 py-2.5 font-label-md text-label-md text-secondary hover:bg-surface-container-low hover:text-primary transition-colors"
+          >
+            Mis facturas
           </a>
           <button
             type="button"
