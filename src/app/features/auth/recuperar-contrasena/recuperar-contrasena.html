@@ -1,0 +1,64 @@
+<section class="px-margin-mobile md:px-margin-desktop py-xl flex justify-center">
+  <div class="w-full max-w-[28rem]">
+    <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-lg md:p-xl shadow-sm">
+      @if (enviado()) {
+        <!-- Confirmacion (anti-enumeracion: mensaje neutro) -->
+        <div class="text-center">
+          <div class="text-4xl">📧</div>
+          <h1 class="mt-sm font-headline-md text-headline-md font-semibold text-primary">
+            Revisa tu correo
+          </h1>
+          <p class="mt-xs font-body-md text-body-md text-on-surface">
+            Si existe una cuenta asociada a ese correo, te enviamos un enlace para
+            restablecer tu contraseña. Revisa tu bandeja de entrada y la carpeta de
+            spam.
+          </p>
+          <a
+            routerLink="/auth"
+            class="mt-md inline-block w-full rounded-full bg-primary px-6 py-3 font-label-md text-on-primary hover:opacity-90 transition"
+          >
+            Volver a iniciar sesión
+          </a>
+        </div>
+      } @else {
+        <header class="mb-lg text-center">
+          <h1 class="font-headline-md text-headline-md font-bold text-on-surface">
+            ¿Olvidaste tu contraseña?
+          </h1>
+          <p class="mt-1 font-body-md text-secondary">
+            Ingresa tu correo y te enviaremos un enlace para restablecerla.
+          </p>
+        </header>
+
+        <form [formGroup]="form" (ngSubmit)="enviar()" class="flex flex-col gap-md" novalidate>
+          <!-- Correo -->
+          <label class="flex flex-col gap-1">
+            <span class="font-label-md text-on-surface">Correo electrónico</span>
+            <input
+              type="email"
+              formControlName="correo"
+              autocomplete="email"
+              class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+            />
+            @if (form.controls.correo.touched && form.controls.correo.invalid) {
+              <span class="text-label-sm text-error">Ingresa un correo válido.</span>
+            }
+          </label>
+
+          <button
+            type="submit"
+            [disabled]="enviando()"
+            class="mt-sm rounded-full bg-primary px-12 py-4 font-label-lg text-on-primary hover:opacity-90 transition disabled:opacity-50"
+          >
+            @if (enviando()) { Enviando… } @else { Enviar enlace }
+          </button>
+        </form>
+      }
+    </div>
+
+    <p class="mt-lg text-center font-body-md text-secondary">
+      ¿Recordaste tu contraseña?
+      <a routerLink="/auth" class="font-label-md text-primary hover:underline">Inicia sesión</a>
+    </p>
+  </div>
+</section>

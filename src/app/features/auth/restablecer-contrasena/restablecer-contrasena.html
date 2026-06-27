@@ -1,0 +1,102 @@
+<section class="px-margin-mobile md:px-margin-desktop py-xl flex justify-center">
+  <div class="w-full max-w-[28rem]">
+    <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-lg md:p-xl shadow-sm">
+      @switch (estado()) {
+        @case ('exito') {
+          <div class="text-center">
+            <div class="text-4xl">✅</div>
+            <h1 class="mt-sm font-headline-md text-headline-md font-semibold text-primary">
+              Contraseña actualizada
+            </h1>
+            <p class="mt-xs font-body-md text-body-md text-on-surface">
+              Ya puedes iniciar sesión con tu nueva contraseña.
+            </p>
+            <a
+              routerLink="/auth"
+              class="mt-md inline-block w-full rounded-full bg-primary px-6 py-3 font-label-md text-on-primary hover:opacity-90 transition"
+            >
+              Iniciar sesión
+            </a>
+          </div>
+        }
+
+        @case ('sin-token') {
+          <div class="text-center">
+            <div class="text-4xl">⚠️</div>
+            <h1 class="mt-sm font-headline-md text-headline-md font-semibold text-error">
+              Enlace no válido
+            </h1>
+            <p class="mt-xs font-body-md text-body-md text-on-surface">
+              El enlace no es válido: falta el token de restablecimiento. Solicita uno nuevo.
+            </p>
+            <a
+              routerLink="/recuperar-contrasena"
+              class="mt-md inline-block w-full rounded-full border border-primary px-6 py-3 font-label-md text-primary hover:bg-primary-container hover:text-on-primary transition"
+            >
+              Solicitar nuevo enlace
+            </a>
+          </div>
+        }
+
+        @case ('formulario') {
+          <header class="mb-lg text-center">
+            <h1 class="font-headline-md text-headline-md font-bold text-on-surface">
+              Nueva contraseña
+            </h1>
+            <p class="mt-1 font-body-md text-secondary">
+              Elige una contraseña segura para tu cuenta de AgroMatina.
+            </p>
+          </header>
+
+          @if (errorReset(); as msg) {
+            <div class="mb-lg rounded-lg border border-error bg-error-container p-md text-on-error-container">
+              <p class="font-label-md">{{ msg }}</p>
+            </div>
+          }
+
+          <form [formGroup]="form" (ngSubmit)="enviar()" class="flex flex-col gap-md" novalidate>
+            <!-- Nueva contraseña -->
+            <label class="flex flex-col gap-1">
+              <span class="font-label-md text-on-surface">Contraseña</span>
+              <input
+                type="password"
+                formControlName="clave_nueva"
+                autocomplete="new-password"
+                class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+              />
+              @if (form.controls.clave_nueva.touched && form.controls.clave_nueva.hasError('claveInsegura')) {
+                <span class="text-label-sm text-error">
+                  Mínimo 8 caracteres, con mayúscula, minúscula y número.
+                </span>
+              } @else if (form.controls.clave_nueva.touched && form.controls.clave_nueva.hasError('required')) {
+                <span class="text-label-sm text-error">La contraseña es obligatoria.</span>
+              }
+            </label>
+
+            <!-- Confirmar contraseña -->
+            <label class="flex flex-col gap-1">
+              <span class="font-label-md text-on-surface">Confirmar contraseña</span>
+              <input
+                type="password"
+                formControlName="confirmacion"
+                autocomplete="new-password"
+                class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+              />
+              @if (form.controls.confirmacion.touched && form.hasError('clavesNoCoinciden')) {
+                <span class="text-label-sm text-error">Las contraseñas no coinciden.</span>
+              }
+            </label>
+
+            <button
+              type="submit"
+              [disabled]="enviando()"
+              class="mt-sm rounded-full bg-primary px-12 py-4 font-label-lg text-on-primary hover:opacity-90 transition disabled:opacity-50"
+            >
+              @if (enviando()) { Guardando… } @else { Restablecer contraseña }
+            </button>
+          </form>
+        }
+      }
+    </div>
+  </div>
+</section>

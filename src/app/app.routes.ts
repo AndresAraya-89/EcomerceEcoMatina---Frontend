@@ -58,6 +58,28 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./features/auth/verificar-cuenta/verificar-cuenta').then((m) => m.VerificarCuenta),
     },
+    // Recuperacion de contrasena (CU-10) — solicita el enlace de restablecimiento
+    {
+        path: 'recuperar-contrasena',
+        loadComponent: () =>
+            import('./features/auth/recuperar-contrasena/recuperar-contrasena').then(
+                (m) => m.RecuperarContrasena,
+            ),
+    },
+    // Restablecer contrasena — destino del enlace del correo (?token=...)
+    {
+        path: 'restablecer-contrasena',
+        loadComponent: () =>
+            import('./features/auth/restablecer-contrasena/restablecer-contrasena').then(
+                (m) => m.RestablecerContrasena,
+            ),
+    },
+    // Confirmar cambio de correo — destino del enlace al nuevo correo (?token=...)
+    {
+        path: 'confirmar-correo',
+        loadComponent: () =>
+            import('./features/auth/confirmar-correo/confirmar-correo').then((m) => m.ConfirmarCorreo),
+    },
     // Mi Perfil (CU-19) — protegida: requiere sesion activa
     {
         path: 'perfil',
