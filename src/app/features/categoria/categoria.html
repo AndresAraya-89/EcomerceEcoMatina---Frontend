@@ -1,52 +1,82 @@
 <section class="max-w-max-width mx-auto w-full px-margin-mobile md:px-margin-desktop pt-lg pb-2xl">
-  @if (grilla.isLoading()) {
-    <p class="py-2xl text-center font-body-lg text-secondary">Cargando productos…</p>
-  } @else if (grilla.error()) {
-    <div class="rounded-lg border border-error bg-error-container p-md text-on-error-container">
-      No se pudieron cargar los productos. Verifica que el servidor esté disponible.
-    </div>
-  } @else if (grilla.value(); as data) {
-    <header class="mb-lg flex items-end justify-between">
-      <h1 class="font-headline-md text-headline-md font-bold text-on-surface">
-        {{ data.categoria.nombre }}
-      </h1>
-      <span class="font-label-md text-secondary">{{ data.total }} productos</span>
-    </header>
+  <div class="flex flex-col gap-lg lg:flex-row lg:items-start lg:gap-xl">
+    <!-- Filtro de categorías: sidebar en escritorio, chips arriba en móvil. -->
+    <app-category-filter
+      class="lg:sticky lg:top-lg lg:w-64 lg:shrink-0"
+      [categorias]="categorias()"
+      [activa]="codigo()"
+      (seleccionar)="seleccionarCategoria($event)"
+    />
 
-    @if (data.productos.length === 0) {
-      <p class="py-2xl text-center font-body-lg text-secondary">
-        No hay productos en esta categoría por ahora.
-      </p>
-    } @else {
-      <div class="grid grid-cols-2 gap-md sm:grid-cols-3 lg:grid-cols-4">
-        @for (producto of data.productos; track producto.codigo) {
-          <app-product-card [producto]="producto" (agregar)="agregar($event)" />
+    <!-- Grilla de productos con sus estados (cargando / error / vacío / éxito). -->
+    <div class="min-w-0 flex-1">
+      @if (grilla.isLoading()) {
+        <!-- Cargando: esqueleto de la grilla (consistente con búsqueda y ofertas). -->
+        <div class="mb-lg h-7 w-48 animate-pulse rounded-DEFAULT bg-surface-container"></div>
+        <div class="grid grid-cols-2 gap-md sm:grid-cols-2 lg:grid-cols-3">
+          @for (s of esqueletos; track $index) {
+            <app-product-card-skeleton />
+          }
+        </div>
+      } @else if (grilla.error()) {
+        <div
+          class="flex flex-col items-start gap-sm rounded-lg border border-error bg-error-container p-md text-on-error-container"
+        >
+          <p class="font-body-md">
+            No se pudieron cargar los productos. Verifica que el servidor esté disponible.
+          </p>
+          <button
+            type="button"
+            (click)="grilla.reload()"
+            class="rounded-DEFAULT bg-error px-4 py-2 font-label-md text-on-error transition-colors hover:opacity-90"
+          >
+            Reintentar
+          </button>
+        </div>
+      } @else if (grilla.value(); as data) {
+        <header class="mb-lg flex items-end justify-between">
+          <h1 class="font-headline-md text-headline-md font-bold text-on-surface">
+            {{ data.categoria.nombre }}
+          </h1>
+          <span class="font-label-md text-secondary">{{ data.total }} productos</span>
+        </header>
+
+        @if (data.productos.length === 0) {
+          <p class="py-2xl text-center font-body-lg text-secondary">
+            No hay productos en esta categoría por ahora.
+          </p>
+        } @else {
+          <div class="grid grid-cols-2 gap-md sm:grid-cols-2 lg:grid-cols-3">
+            @for (producto of data.productos; track producto.codigo) {
+              <app-product-card [producto]="producto" (agregar)="agregar($event)" />
+            }
+          </div>
+
+          @if (data.total_paginas > 1) {
+            <nav class="mt-xl flex items-center justify-center gap-md">
+              <button
+                type="button"
+                (click)="paginaPrevia()"
+                [disabled]="!hayPaginaPrevia()"
+                class="rounded-full border border-outline px-5 py-2 font-label-md text-on-surface hover:bg-surface-container-low disabled:opacity-40"
+              >
+                Anterior
+              </button>
+              <span class="font-label-md text-secondary">
+                Página {{ data.pagina }} de {{ data.total_paginas }}
+              </span>
+              <button
+                type="button"
+                (click)="paginaSiguiente()"
+                [disabled]="!hayPaginaSiguiente()"
+                class="rounded-full border border-outline px-5 py-2 font-label-md text-on-surface hover:bg-surface-container-low disabled:opacity-40"
+              >
+                Siguiente
+              </button>
+            </nav>
+          }
         }
-      </div>
-
-      @if (data.total_paginas > 1) {
-        <nav class="mt-xl flex items-center justify-center gap-md">
-          <button
-            type="button"
-            (click)="paginaPrevia()"
-            [disabled]="!hayPaginaPrevia()"
-            class="rounded-full border border-outline px-5 py-2 font-label-md text-on-surface hover:bg-surface-container-low disabled:opacity-40"
-          >
-            Anterior
-          </button>
-          <span class="font-label-md text-secondary">
-            Página {{ data.pagina }} de {{ data.total_paginas }}
-          </span>
-          <button
-            type="button"
-            (click)="paginaSiguiente()"
-            [disabled]="!hayPaginaSiguiente()"
-            class="rounded-full border border-outline px-5 py-2 font-label-md text-on-surface hover:bg-surface-container-low disabled:opacity-40"
-          >
-            Siguiente
-          </button>
-        </nav>
       }
-    }
-  }
+    </div>
+  </div>
 </section>

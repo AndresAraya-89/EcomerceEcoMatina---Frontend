@@ -3,6 +3,7 @@ import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { CartItem } from '../models/cart.models';
 import { CartApiService } from './cart-api.service';
 import { CartStorageService } from './cart-storage.service';
+import { NotificationService } from './notification.service';
 
 /**
  * Estado y reglas del carrito (patron Facade + store con signals).
@@ -19,6 +20,7 @@ import { CartStorageService } from './cart-storage.service';
 export class CartService {
   private readonly api = inject(CartApiService);
   private readonly storage = inject(CartStorageService);
+  private readonly notificaciones = inject(NotificationService);
 
   // ── Estado privado escribible ──────────────────────────────────────────
   private readonly _items = signal<CartItem[]>(this.storage.cargar());
@@ -90,9 +92,14 @@ export class CartService {
           };
           return copia;
         });
+        this.notificaciones.exito(`"${validado.nombre}" se agregó al carrito`);
         this.refrescarResumen();
       },
-      error: (err) => this._error.set(this.mensajeError(err)),
+      error: (err) => {
+        const mensaje = this.mensajeError(err);
+        this._error.set(mensaje);
+        this.notificaciones.error(mensaje);
+      },
     });
   }
 

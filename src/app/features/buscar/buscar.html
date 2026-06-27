@@ -1,0 +1,121 @@
+<section class="max-w-max-width mx-auto w-full px-margin-mobile md:px-margin-desktop pt-lg pb-2xl">
+  <div class="flex flex-col gap-lg lg:flex-row lg:items-start lg:gap-xl">
+    <!-- Filtro de categorías: sidebar en escritorio, chips arriba en móvil. -->
+    <app-category-filter
+      class="lg:sticky lg:top-lg lg:w-64 lg:shrink-0"
+      [categorias]="categorias()"
+      [activa]="categoriaFiltro()"
+      (seleccionar)="seleccionarCategoria($event)"
+    />
+
+    <div class="min-w-0 flex-1">
+      @if (consulta() === '') {
+        <!-- Sin término: invitar a buscar (estado vacío inicial). -->
+        <div
+          class="flex flex-col items-center gap-sm rounded-lg border border-outline-variant bg-surface-container-low p-2xl text-center"
+        >
+          <span class="material-symbols-outlined text-[48px] text-secondary">search</span>
+          <p class="font-body-lg text-body-lg text-on-surface">¿Qué estás buscando?</p>
+          <p class="font-body-md text-secondary">
+            Escribe en la barra de búsqueda para encontrar productos del catálogo.
+          </p>
+        </div>
+      } @else if (resultado.isLoading()) {
+        <!-- Cargando: esqueleto de la grilla (mejor que un texto plano). -->
+        <div class="mb-lg h-7 w-64 animate-pulse rounded-DEFAULT bg-surface-container"></div>
+        <div class="grid grid-cols-2 gap-md sm:grid-cols-2 lg:grid-cols-3">
+          @for (s of esqueletos; track $index) {
+            <app-product-card-skeleton />
+          }
+        </div>
+      } @else if (resultado.error()) {
+        <!-- Error: mensaje accionable con opción de reintentar. -->
+        <div
+          class="flex flex-col items-start gap-sm rounded-lg border border-error bg-error-container p-md text-on-error-container"
+        >
+          <p class="font-body-md">
+            No se pudo completar la búsqueda. Verifica que el servidor esté disponible.
+          </p>
+          <button
+            type="button"
+            (click)="resultado.reload()"
+            class="rounded-DEFAULT bg-error px-4 py-2 font-label-md text-on-error transition-colors hover:opacity-90"
+          >
+            Reintentar
+          </button>
+        </div>
+      } @else if (resultado.value(); as data) {
+        <header class="mb-lg flex flex-wrap items-end justify-between gap-sm">
+          <h1 class="font-headline-md text-headline-md font-bold text-on-surface">
+            Resultados para «{{ consulta() }}»
+          </h1>
+          <span class="font-label-md text-secondary">{{ data.total }} productos</span>
+        </header>
+
+        @if (categoriaFiltro() !== '') {
+          <button
+            type="button"
+            (click)="quitarFiltro()"
+            class="mb-md inline-flex items-center gap-1 font-label-md text-label-md text-primary hover:underline"
+          >
+            <span class="material-symbols-outlined text-[18px]">close</span>
+            Quitar filtro de categoría
+          </button>
+        }
+
+        @if (data.productos.length === 0) {
+          <!-- Vacío: sin coincidencias, con sugerencias. -->
+          <div
+            class="flex flex-col items-center gap-sm rounded-lg border border-outline-variant bg-surface-container-low p-2xl text-center"
+          >
+            <span class="material-symbols-outlined text-[48px] text-secondary">search_off</span>
+            <p class="font-body-lg text-body-lg text-on-surface">Sin resultados</p>
+            <p class="font-body-md text-secondary">
+              No encontramos productos para «{{ consulta() }}». Probá con otras palabras o revisá la
+              ortografía.
+            </p>
+            @if (categoriaFiltro() !== '') {
+              <button
+                type="button"
+                (click)="quitarFiltro()"
+                class="mt-sm rounded-DEFAULT border border-outline px-4 py-2 font-label-md text-on-surface transition-colors hover:bg-surface-container-low"
+              >
+                Buscar en todas las categorías
+              </button>
+            }
+          </div>
+        } @else {
+          <div class="grid grid-cols-2 gap-md sm:grid-cols-2 lg:grid-cols-3">
+            @for (producto of data.productos; track producto.codigo) {
+              <app-product-card [producto]="producto" (agregar)="agregar($event)" />
+            }
+          </div>
+
+          @if (data.total_paginas > 1) {
+            <nav class="mt-xl flex items-center justify-center gap-md" aria-label="Paginación">
+              <button
+                type="button"
+                (click)="paginaPrevia()"
+                [disabled]="!hayPaginaPrevia()"
+                class="rounded-full border border-outline px-5 py-2 font-label-md text-on-surface hover:bg-surface-container-low disabled:opacity-40"
+              >
+                Anterior
+              </button>
+              <span class="font-label-md text-secondary">
+                Página {{ data.pagina }} de {{ data.total_paginas }}
+              </span>
+              <button
+                type="button"
+                (click)="paginaSiguiente()"
+                [disabled]="!hayPaginaSiguiente()"
+                class="rounded-full border border-outline px-5 py-2 font-label-md text-on-surface hover:bg-surface-container-low disabled:opacity-40"
+              >
+                Siguiente
+              </button>
+            </nav>
+          }
+        }
+      }
+    </div>
+  </div>
+</section>

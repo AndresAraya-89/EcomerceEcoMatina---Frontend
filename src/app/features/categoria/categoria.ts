@@ -1,12 +1,24 @@
-import { ChangeDetectionStrategy, Component, computed, inject, resource, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  resource,
+  signal,
+  untracked,
+} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ProductApiService } from '../../core/services/product-api.service';
 import { CartService } from '../../core/services/cart.service';
+import { Categoria as CategoriaModel } from '../../core/models/product.models';
 import { ProductCard } from '../../shared/components/product-card/product-card';
+import { ProductCardSkeleton } from '../../shared/components/product-card-skeleton/product-card-skeleton';
+import { CategoryFilter } from '../../shared/components/category-filter/category-filter';
 
 /**
  * Pagina generica de productos por categoria (RF-05).
@@ -18,13 +30,14 @@ import { ProductCard } from '../../shared/components/product-card/product-card';
  */
 @Component({
   selector: 'app-categoria',
-  imports: [ProductCard],
+  imports: [ProductCard, ProductCardSkeleton, CategoryFilter],
   templateUrl: './categoria.html',
   styleUrl: './categoria.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Categoria {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly api = inject(ProductApiService);
   private readonly cart = inject(CartService);
 
@@ -34,8 +47,30 @@ export class Categoria {
     { initialValue: '' },
   );
 
+  /** Categorias para el filtro lateral (RF-04). Independientes de la grilla. */
+  readonly categorias = toSignal(this.api.obtenerCategorias(), {
+    initialValue: [] as CategoriaModel[],
+  });
+
   /** Pagina actual de la grilla (RF-11). */
   readonly pagina = signal(1);
+
+  /** Placeholders para el esqueleto de carga (no representan datos). */
+  readonly esqueletos = Array.from({ length: 6 });
+
+  constructor() {
+    // La URL es la fuente de verdad de la categoria; al cambiar de categoria
+    // (filtro o menu) la paginacion vuelve al inicio para no pedir una pagina
+    // inexistente de la nueva grilla.
+    effect(() => {
+      this.codigo();
+      untracked(() => {
+        if (this.pagina() !== 1) {
+          this.pagina.set(1);
+        }
+      });
+    });
+  }
 
   /** Carga reactiva: se vuelve a pedir cuando cambia el codigo o la pagina. */
   readonly grilla = resource({
@@ -56,6 +91,11 @@ export class Categoria {
 
   agregar(codigoProducto: string): void {
     this.cart.agregar(codigoProducto, 1);
+  }
+
+  /** Cambia de categoria navegando: mantiene la URL deep-linkeable y recarga la grilla. */
+  seleccionarCategoria(codigoCategoria: string): void {
+    this.router.navigate(['/categoria', codigoCategoria]);
   }
 
   paginaPrevia(): void {

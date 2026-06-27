@@ -1,0 +1,29 @@
+@if (cargando()) {
+  <section
+    id="ofertas"
+    class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-xl scroll-mt-[80px]"
+  >
+    <div class="mb-lg h-8 w-48 animate-pulse rounded-DEFAULT bg-surface-container"></div>
+    <div class="grid grid-cols-2 gap-md sm:grid-cols-3 lg:grid-cols-4">
+      @for (s of esqueletos; track $index) {
+        <app-product-card-skeleton />
+      }
+    </div>
+  </section>
+} @else if (ofertas().length > 0) {
+  <section
+    id="ofertas"
+    class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-xl scroll-mt-[80px]"
+  >
+    <div class="mb-lg flex items-center gap-sm">
+      <span class="material-symbols-outlined text-error" aria-hidden="true">local_offer</span>
+      <h2 class="font-headline-md text-headline-md text-on-surface">Ofertas</h2>
+    </div>
+
+    <div class="grid grid-cols-2 gap-md sm:grid-cols-3 lg:grid-cols-4">
+      @for (producto of ofertas(); track producto.codigo) {
+        <app-product-card [producto]="producto" (agregar)="agregar($event)" />
+      }
+    </div>
+  </section>
+}

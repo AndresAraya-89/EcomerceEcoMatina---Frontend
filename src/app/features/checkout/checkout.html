@@ -1,0 +1,171 @@
+<section class="max-w-[42rem] mx-auto w-full px-margin-mobile md:px-margin-desktop py-lg">
+  @if (resultado(); as pedido) {
+    <!-- Confirmación del pedido + instrucciones de pago. -->
+    <div class="flex flex-col items-center gap-sm text-center">
+      <span class="material-symbols-outlined filled text-6xl text-primary" aria-hidden="true">
+        check_circle
+      </span>
+      <h1 class="font-headline-md text-headline-md font-bold text-on-surface">¡Pedido confirmado!</h1>
+      <p class="font-body-md text-secondary">{{ pedido.mensaje }}</p>
+    </div>
+
+    <div class="mt-lg rounded-lg border border-outline-variant bg-surface-container-low p-lg">
+      <dl class="flex flex-col gap-sm">
+        <div class="flex items-center justify-between">
+          <dt class="font-label-md text-secondary">Número de orden</dt>
+          <dd class="font-label-lg font-bold text-on-surface">{{ pedido.numero_orden }}</dd>
+        </div>
+        <div class="flex items-center justify-between">
+          <dt class="font-label-md text-secondary">Estado</dt>
+          <dd class="font-label-md text-on-surface">{{ pedido.estado }}</dd>
+        </div>
+        <div class="flex items-center justify-between">
+          <dt class="font-label-md text-secondary">Total</dt>
+          <dd class="font-title-lg text-title-lg font-bold text-on-surface">
+            {{ pedido.total | currency: 'CRC' : 'symbol-narrow' }}
+          </dd>
+        </div>
+      </dl>
+
+      @if (instruccionesPago(); as instrucciones) {
+        <hr class="my-md border-outline-variant" />
+        <h2 class="mb-sm font-title-md text-title-md text-on-surface">Instrucciones de pago</h2>
+        <p class="font-body-md text-on-surface-variant">{{ instrucciones }}</p>
+      }
+    </div>
+
+    <div class="mt-lg flex flex-col gap-sm">
+      <!-- PayPal: la acción principal es ir a la pasarela a aprobar el pago. -->
+      @if (accionPago() === 'PAYMENT_GATEWAY_REDIRECT' && urlPasarela(); as url) {
+        <!-- Redirección en la MISMA pestaña: así PayPal vuelve al return_url dentro de la app. -->
+        <a
+          [href]="url"
+          class="flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-label-lg text-on-primary transition hover:opacity-90"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+          Continuar a PayPal para pagar
+        </a>
+      }
+
+      <div class="flex flex-col gap-sm sm:flex-row">
+        <a
+          [href]="urlPdf(pedido.numero_orden)"
+          target="_blank"
+          rel="noopener"
+          class="flex flex-1 items-center justify-center gap-2 rounded-full border border-outline px-6 py-3 font-label-lg text-on-surface transition hover:bg-surface-container-low"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">download</span>
+          Descargar comprobante (PDF)
+        </a>
+        <a
+          routerLink="/inicio"
+          class="flex flex-1 items-center justify-center rounded-full border border-outline px-6 py-3 font-label-lg text-on-surface transition hover:bg-surface-container-low"
+        >
+          Seguir comprando
+        </a>
+      </div>
+    </div>
+  } @else if (vacio()) {
+    <!-- Sin ítems que cobrar. -->
+    <div class="flex flex-col items-center justify-center gap-md py-2xl text-center">
+      <span class="material-symbols-outlined text-6xl text-outline" aria-hidden="true">
+        shopping_cart
+      </span>
+      <p class="font-body-lg text-secondary">Tu carrito está vacío.</p>
+      <a
+        routerLink="/inicio"
+        class="rounded-full bg-primary px-6 py-2 font-label-lg text-on-primary transition hover:opacity-90"
+      >
+        Ver productos
+      </a>
+    </div>
+  } @else {
+    <h1 class="mb-lg font-headline-md text-headline-md font-bold text-on-surface">Finalizar compra</h1>
+
+    <div class="grid gap-lg lg:grid-cols-[1fr_320px]">
+      <!-- Método de pago -->
+      <div>
+        <h2 class="mb-sm font-title-lg text-title-lg text-on-surface">Método de pago</h2>
+        <fieldset class="flex flex-col gap-sm">
+          <legend class="sr-only">Elegí un método de pago</legend>
+          @for (metodo of metodos; track metodo.valor) {
+            <label
+              class="flex cursor-pointer items-center gap-md rounded-lg border p-md transition-colors"
+              [class.border-primary]="metodoPago() === metodo.valor"
+              [class.bg-primary-container]="metodoPago() === metodo.valor"
+              [class.border-outline-variant]="metodoPago() !== metodo.valor"
+            >
+              <input
+                type="radio"
+                name="metodoPago"
+                class="accent-primary"
+                [value]="metodo.valor"
+                [checked]="metodoPago() === metodo.valor"
+                (change)="seleccionarMetodo(metodo.valor)"
+              />
+              <span class="material-symbols-outlined text-on-surface-variant" aria-hidden="true">
+                {{ metodo.icono }}
+              </span>
+              <span class="font-label-lg text-on-surface">{{ metodo.etiqueta }}</span>
+            </label>
+          }
+        </fieldset>
+
+        @if (errorEnvio(); as msg) {
+          <div
+            class="mt-md rounded-lg border border-error bg-error-container p-md text-on-error-container"
+            role="alert"
+          >
+            {{ msg }}
+          </div>
+        }
+      </div>
+
+      <!-- Resumen del pedido -->
+      <aside class="h-fit rounded-lg border border-outline-variant bg-surface-container-low p-lg">
+        <h2 class="mb-md font-title-lg text-title-lg text-on-surface">Tu pedido</h2>
+        <ul class="flex flex-col gap-2">
+          @for (item of items(); track item.codigo_producto) {
+            <li class="flex items-start justify-between gap-md text-label-md">
+              <span class="text-on-surface">{{ item.nombre }} × {{ item.cantidad }}</span>
+              <span class="text-right text-on-surface">
+                {{ item.subtotal | currency: 'CRC' : 'symbol-narrow' }}
+              </span>
+            </li>
+          }
+        </ul>
+
+        <hr class="my-md border-outline-variant" />
+        <div class="flex items-center justify-between font-body-lg">
+          <span class="text-secondary">Total</span>
+          <span class="font-bold text-on-surface">
+            @if (cargandoTotal()) {
+              Calculando…
+            } @else {
+              {{ total() | currency: 'CRC' : 'symbol-narrow' }}
+            }
+          </span>
+        </div>
+
+        <button
+          type="button"
+          (click)="confirmar()"
+          [disabled]="enviando() || cargandoTotal()"
+          class="mt-lg w-full rounded-full bg-primary px-6 py-3 font-label-lg text-on-primary transition hover:opacity-90 disabled:opacity-50"
+        >
+          @if (enviando()) {
+            Procesando…
+          } @else {
+            Confirmar pedido
+          }
+        </button>
+        <a
+          routerLink="/cart"
+          class="mt-2 block w-full rounded-full px-6 py-2 text-center font-label-md text-secondary transition hover:bg-surface-container"
+        >
+          Volver al carrito
+        </a>
+      </aside>
+    </div>
+  }
+</section>

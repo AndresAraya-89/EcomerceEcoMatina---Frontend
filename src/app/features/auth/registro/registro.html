@@ -1,0 +1,185 @@
+<section class="px-margin-mobile md:px-margin-desktop py-xl flex justify-center">
+  <div class="w-full max-w-[42rem]">
+  <!-- Confirmación tras registro exitoso -->
+  @if (registrado(); as correo) {
+    <div class="rounded-xl border border-primary bg-primary-container p-lg md:p-xl text-on-primary-container shadow-sm">
+      <h1 class="font-headline-md text-headline-md font-bold">¡Cuenta creada!</h1>
+      <p class="mt-2 font-body-md">
+        Te enviamos un correo de verificación a <strong>{{ correo }}</strong>. Ábrelo para
+        activar tu cuenta y luego inicia sesión.
+      </p>
+      <a
+        routerLink="/auth"
+        class="mt-md inline-block rounded-full bg-primary px-8 py-3 font-label-lg text-on-primary hover:opacity-90 transition"
+      >
+        Ir a iniciar sesión
+      </a>
+    </div>
+  } @else {
+    <div class="rounded-xl border border-outline bg-surface p-lg md:p-xl shadow-sm">
+    <header class="mb-lg text-center">
+      <h1 class="font-headline-md text-headline-md font-bold text-on-surface">Crear cuenta</h1>
+      <p class="mt-1 font-body-md text-secondary">
+        Regístrate para comprar en AgroMatina y dar seguimiento a tus pedidos.
+      </p>
+    </header>
+
+    @if (errorRegistro(); as msg) {
+      <div class="mb-lg rounded-lg border border-error bg-error-container p-md text-on-error-container">
+        {{ msg }}
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="enviar()" class="flex flex-col gap-md" novalidate>
+      <div class="grid gap-md md:grid-cols-2">
+        <!-- Nombre -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-md text-on-surface">Nombre</span>
+          <input
+            type="text"
+            formControlName="nombre"
+            autocomplete="given-name"
+            class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+          />
+          @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+            <span class="text-label-sm text-error">El nombre es obligatorio.</span>
+          }
+        </label>
+
+        <!-- Primer apellido -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-md text-on-surface">Primer apellido</span>
+          <input
+            type="text"
+            formControlName="primer_apellido"
+            autocomplete="family-name"
+            class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+          />
+          @if (form.controls.primer_apellido.touched && form.controls.primer_apellido.invalid) {
+            <span class="text-label-sm text-error">El primer apellido es obligatorio.</span>
+          }
+        </label>
+      </div>
+
+      <!-- Segundo apellido (opcional) -->
+      <label class="flex flex-col gap-1">
+        <span class="font-label-md text-on-surface">
+          Segundo apellido <span class="text-secondary">(opcional)</span>
+        </span>
+        <input
+          type="text"
+          formControlName="segundo_apellido"
+          class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+        />
+      </label>
+
+      <div class="grid gap-md md:grid-cols-2">
+        <!-- Tipo de identificación -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-md text-on-surface">Tipo de identificación</span>
+          <select
+            formControlName="tipo_identificacion"
+            class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+          >
+            @for (tipo of tiposIdentificacion; track tipo.valor) {
+              <option [value]="tipo.valor">{{ tipo.etiqueta }}</option>
+            }
+          </select>
+        </label>
+
+        <!-- Número de identificación -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-md text-on-surface">Número de identificación</span>
+          <input
+            type="text"
+            formControlName="numero_identificacion"
+            class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+          />
+          @if (form.controls.numero_identificacion.touched && form.controls.numero_identificacion.invalid) {
+            <span class="text-label-sm text-error">Ingresa tu número de identificación.</span>
+          }
+        </label>
+      </div>
+
+      <div class="grid gap-md md:grid-cols-2">
+        <!-- Correo -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-md text-on-surface">Correo electrónico</span>
+          <input
+            type="email"
+            formControlName="correo"
+            autocomplete="email"
+            class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+          />
+          @if (form.controls.correo.touched && form.controls.correo.invalid) {
+            <span class="text-label-sm text-error">Ingresa un correo válido.</span>
+          }
+        </label>
+
+        <!-- Teléfono -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-md text-on-surface">Teléfono</span>
+          <input
+            type="tel"
+            formControlName="telefono"
+            placeholder="8888-7777"
+            autocomplete="tel"
+            class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+          />
+          @if (form.controls.telefono.touched && form.controls.telefono.invalid) {
+            <span class="text-label-sm text-error">Teléfono inválido (8 a 15 dígitos).</span>
+          }
+        </label>
+      </div>
+
+      <div class="grid gap-md md:grid-cols-2">
+        <!-- Contraseña -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-md text-on-surface">Contraseña</span>
+          <input
+            type="password"
+            formControlName="clave"
+            autocomplete="new-password"
+            class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+          />
+          @if (form.controls.clave.touched && form.controls.clave.hasError('claveInsegura')) {
+            <span class="text-label-sm text-error">
+              Mínimo 8 caracteres, con mayúscula, minúscula y número.
+            </span>
+          } @else if (form.controls.clave.touched && form.controls.clave.hasError('required')) {
+            <span class="text-label-sm text-error">La contraseña es obligatoria.</span>
+          }
+        </label>
+
+        <!-- Confirmar contraseña -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-md text-on-surface">Confirmar contraseña</span>
+          <input
+            type="password"
+            formControlName="confirmacion"
+            autocomplete="new-password"
+            class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+          />
+          @if (form.controls.confirmacion.touched && form.hasError('clavesNoCoinciden')) {
+            <span class="text-label-sm text-error">Las contraseñas no coinciden.</span>
+          }
+        </label>
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="enviando()"
+        class="mt-sm self-start rounded-full bg-primary px-12 py-4 font-label-lg text-on-primary hover:opacity-90 transition disabled:opacity-50"
+      >
+        @if (enviando()) { Creando cuenta… } @else { Crear cuenta }
+      </button>
+    </form>
+
+    <p class="mt-lg text-center font-body-md text-secondary">
+      ¿Ya tienes cuenta?
+      <a routerLink="/auth" class="font-label-md text-primary hover:underline">Inicia sesión</a>
+    </p>
+    </div>
+  }
+  </div>
+</section>

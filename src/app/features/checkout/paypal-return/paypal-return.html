@@ -1,0 +1,93 @@
+<section class="max-w-[42rem] mx-auto w-full px-margin-mobile md:px-margin-desktop py-2xl">
+  @if (token() === '') {
+    <!-- Llegada sin token: no hay nada que capturar. -->
+    <div class="flex flex-col items-center gap-sm text-center">
+      <span class="material-symbols-outlined text-6xl text-error" aria-hidden="true">error</span>
+      <h1 class="font-headline-md text-headline-md font-bold text-on-surface">Pago no válido</h1>
+      <p class="font-body-md text-secondary">No recibimos la referencia del pago de PayPal.</p>
+      <a
+        routerLink="/cart"
+        class="mt-sm rounded-full bg-primary px-6 py-2 font-label-lg text-on-primary transition hover:opacity-90"
+      >
+        Volver al carrito
+      </a>
+    </div>
+  } @else if (captura.isLoading()) {
+    <!-- Capturando el pago. -->
+    <div class="flex flex-col items-center gap-md py-xl text-center">
+      <span class="material-symbols-outlined animate-spin text-5xl text-primary" aria-hidden="true">
+        progress_activity
+      </span>
+      <p class="font-body-lg text-on-surface">Confirmando tu pago con PayPal…</p>
+    </div>
+  } @else if (captura.error()) {
+    <!-- Falló la captura. -->
+    <div class="flex flex-col items-center gap-sm text-center">
+      <span class="material-symbols-outlined text-6xl text-error" aria-hidden="true">error</span>
+      <h1 class="font-headline-md text-headline-md font-bold text-on-surface">
+        No se pudo confirmar el pago
+      </h1>
+      <p class="font-body-md text-secondary">
+        Si el cargo se realizó, contactá a soporte con tu comprobante. Podés reintentar la
+        confirmación.
+      </p>
+      <div class="mt-sm flex flex-col gap-sm sm:flex-row">
+        <button
+          type="button"
+          (click)="captura.reload()"
+          class="rounded-full bg-primary px-6 py-2 font-label-lg text-on-primary transition hover:opacity-90"
+        >
+          Reintentar
+        </button>
+        <a
+          routerLink="/cart"
+          class="rounded-full border border-outline px-6 py-2 text-center font-label-lg text-on-surface transition hover:bg-surface-container-low"
+        >
+          Volver al carrito
+        </a>
+      </div>
+    </div>
+  } @else if (captura.value(); as pedido) {
+    <!-- Pago confirmado. -->
+    <div class="flex flex-col items-center gap-sm text-center">
+      <span class="material-symbols-outlined filled text-6xl text-primary" aria-hidden="true">
+        check_circle
+      </span>
+      <h1 class="font-headline-md text-headline-md font-bold text-on-surface">¡Pago confirmado!</h1>
+      <p class="font-body-md text-secondary">{{ pedido.mensaje }}</p>
+    </div>
+
+    <div class="mt-lg rounded-lg border border-outline-variant bg-surface-container-low p-lg">
+      <dl class="flex flex-col gap-sm">
+        <div class="flex items-center justify-between">
+          <dt class="font-label-md text-secondary">Número de orden</dt>
+          <dd class="font-label-lg font-bold text-on-surface">{{ pedido.numero_orden }}</dd>
+        </div>
+        <div class="flex items-center justify-between">
+          <dt class="font-label-md text-secondary">Total</dt>
+          <dd class="font-title-lg text-title-lg font-bold text-on-surface">
+            {{ pedido.total | currency: 'CRC' : 'symbol-narrow' }}
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="mt-lg flex flex-col gap-sm sm:flex-row">
+      <a
+        [href]="urlPdf(pedido.numero_orden)"
+        target="_blank"
+        rel="noopener"
+        class="flex flex-1 items-center justify-center gap-2 rounded-full border border-outline px-6 py-3 font-label-lg text-on-surface transition hover:bg-surface-container-low"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">download</span>
+        Descargar comprobante (PDF)
+      </a>
+      <a
+        routerLink="/inicio"
+        class="flex flex-1 items-center justify-center rounded-full bg-primary px-6 py-3 font-label-lg text-on-primary transition hover:opacity-90"
+      >
+        Seguir comprando
+      </a>
+    </div>
+  }
+</section>

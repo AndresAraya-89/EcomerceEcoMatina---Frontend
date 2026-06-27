@@ -1,0 +1,32 @@
+@if (categorias().length > 0) {
+  <aside
+    class="rounded-lg border border-outline-variant bg-surface-container-low p-md shadow-sm dark:bg-surface-container-highest"
+  >
+    <h2 class="mb-sm font-title-md text-title-md font-bold text-primary dark:text-primary-fixed">
+      Categorías
+    </h2>
+
+    <!-- Chips horizontales en móvil, lista vertical en escritorio. -->
+    <nav
+      class="flex gap-xs overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0"
+      aria-label="Filtrar por categoría"
+    >
+      @for (categoria of categorias(); track categoria.codigo) {
+        <button
+          type="button"
+          (click)="onSeleccionar(categoria.codigo)"
+          [attr.aria-current]="categoria.codigo === activa() ? 'true' : null"
+          class="flex shrink-0 items-center gap-sm rounded-full px-4 py-2 font-label-md text-label-md transition-colors lg:w-full lg:shrink lg:justify-start lg:rounded-lg"
+          [class.bg-primary-container]="categoria.codigo === activa()"
+          [class.text-on-primary-container]="categoria.codigo === activa()"
+          [class.font-bold]="categoria.codigo === activa()"
+          [class.text-on-surface-variant]="categoria.codigo !== activa()"
+          [class.hover:bg-surface-variant]="categoria.codigo !== activa()"
+        >
+          <span class="material-symbols-outlined text-[18px]">category</span>
+          <span class="whitespace-nowrap lg:whitespace-normal">{{ categoria.nombre }}</span>
+        </button>
+      }
+    </nav>
+  </aside>
+}

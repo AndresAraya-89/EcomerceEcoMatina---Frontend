@@ -1,0 +1,76 @@
+<section class="px-margin-mobile md:px-margin-desktop py-xl flex justify-center">
+  <div class="w-full max-w-[28rem]">
+  <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-lg md:p-xl shadow-sm">
+  <header class="mb-lg text-center">
+    <h1 class="font-headline-md text-headline-md font-bold text-on-surface">
+      Iniciar sesión
+    </h1>
+    <p class="mt-1 font-body-md text-secondary">
+      Ingresa a tu cuenta de AgroMatina para comprar y ver tus facturas.
+    </p>
+  </header>
+
+  <!-- Error de inicio de sesión -->
+  @if (errorLogin(); as msg) {
+    <div class="mb-lg rounded-lg border border-error bg-error-container p-md text-on-error-container">
+      <p class="font-label-md">{{ msg }}</p>
+      @if (cuentaSinVerificar() && !verificacionReenviada()) {
+        <button
+          type="button"
+          (click)="reenviarVerificacion()"
+          class="mt-2 font-label-md text-on-error-container underline hover:opacity-90"
+        >
+          Reenviar correo de verificación
+        </button>
+      }
+      @if (verificacionReenviada()) {
+        <p class="mt-2 text-label-md">Te reenviamos el enlace. Revisa tu bandeja de entrada.</p>
+      }
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="enviar()" class="flex flex-col gap-md" novalidate>
+    <!-- Correo -->
+    <label class="flex flex-col gap-1">
+      <span class="font-label-md text-on-surface">Correo electrónico</span>
+      <input
+        type="email"
+        formControlName="correo"
+        autocomplete="email"
+        class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+      />
+      @if (form.controls.correo.touched && form.controls.correo.invalid) {
+        <span class="text-label-sm text-error">Ingresa un correo válido.</span>
+      }
+    </label>
+
+    <!-- Contraseña -->
+    <label class="flex flex-col gap-1">
+      <span class="font-label-md text-on-surface">Contraseña</span>
+      <input
+        type="password"
+        formControlName="clave"
+        autocomplete="current-password"
+        class="rounded-lg border border-outline bg-surface px-3 py-2 text-on-surface focus:border-primary focus:outline-none"
+      />
+      @if (form.controls.clave.touched && form.controls.clave.invalid) {
+        <span class="text-label-sm text-error">Ingresa tu contraseña.</span>
+      }
+    </label>
+
+    <button
+      type="submit"
+      [disabled]="enviando()"
+      class="mt-sm rounded-full bg-primary px-12 py-4 font-label-lg text-on-primary hover:opacity-90 transition disabled:opacity-50"
+    >
+      @if (enviando()) { Ingresando… } @else { Iniciar sesión }
+    </button>
+  </form>
+  </div>
+
+  <p class="mt-lg text-center font-body-md text-secondary">
+    ¿No tienes cuenta?
+    <a routerLink="/registro" class="font-label-md text-primary hover:underline">Regístrate</a>
+  </p>
+  </div>
+</section>
