@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpErrorResponse } from '@angular/common/http';
 import { of, throwError } from 'rxjs';
 
 import { AuthService } from './auth.service';
@@ -127,6 +128,35 @@ describe('AuthService (facade)', () => {
       expect(api.refrescar).not.toHaveBeenCalled();
     });
 
+    it('si el backend rechaza el refresh (401) cierra la sesion local', () => {
+      storage.refreshToken.and.returnValue('REFRESH-ROTADO');
+      api.refrescar.and.returnValue(
+        throwError(() => new HttpErrorResponse({ status: 401, statusText: 'Unauthorized' })),
+      );
+
+      const service = crearServicio();
+      let errorRecibido = false;
+      service.renovarSesion().subscribe({ error: () => (errorRecibido = true) });
+
+      expect(errorRecibido).toBeTrue();
+      expect(storage.limpiar).toHaveBeenCalled();
+    });
+
+    it('si el refresh falla por error transitorio (5xx) CONSERVA la sesion', () => {
+      storage.refreshToken.and.returnValue('REFRESH-1');
+      api.refrescar.and.returnValue(
+        throwError(() => new HttpErrorResponse({ status: 503, statusText: 'Service Unavailable' })),
+      );
+
+      const service = crearServicio();
+      let errorRecibido = false;
+      service.renovarSesion().subscribe({ error: () => (errorRecibido = true) });
+
+      expect(errorRecibido).toBeTrue();
+      // No se desloguea ante un hipo de red/servidor: los tokens siguen validos.
+      expect(storage.limpiar).not.toHaveBeenCalled();
+    });
+
     it('deduplica renovaciones concurrentes: una sola peticion /refresh', () => {
       storage.refreshToken.and.returnValue('REFRESH-1');
       api.refrescar.and.returnValue(of(buildTokenResponse({ access_token: 'NUEVO' })));
@@ -153,15 +183,30 @@ describe('AuthService (facade)', () => {
       expect(service.estaAutenticado()).toBeTrue();
     });
 
-    it('si /me falla al arrancar, cierra la sesion local', () => {
+    it('si /me es rechazado por credenciales (401) al arrancar, cierra la sesion local', () => {
       storage.tieneSesion.and.returnValue(true);
-      api.obtenerUsuarioActual.and.returnValue(throwError(() => new Error('401')));
+      api.obtenerUsuarioActual.and.returnValue(
+        throwError(() => new HttpErrorResponse({ status: 401, statusText: 'Unauthorized' })),
+      );
 
       const service = crearServicio();
 
       expect(storage.limpiar).toHaveBeenCalled();
       expect(service.estaAutenticado()).toBeFalse();
       expect(service.usuario()).toBeNull();
+    });
+
+    it('si /me falla por error transitorio (5xx) al arrancar, CONSERVA la sesion', () => {
+      storage.tieneSesion.and.returnValue(true);
+      api.obtenerUsuarioActual.and.returnValue(
+        throwError(() => new HttpErrorResponse({ status: 500, statusText: 'Server Error' })),
+      );
+
+      const service = crearServicio();
+
+      // Un hipo al volver de PayPal no debe desloguear: los tokens siguen validos.
+      expect(storage.limpiar).not.toHaveBeenCalled();
+      expect(service.estaAutenticado()).toBeTrue();
     });
   });
 });

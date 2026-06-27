@@ -31,9 +31,12 @@ function conToken<T>(req: HttpRequest<T>, token: string): HttpRequest<T> {
  * Interceptor de seguridad (patron Chain of Responsibility de HttpClient).
  *
  * 1. Adjunta el access token a las peticiones protegidas.
- * 2. Ante un 401, intenta renovar la sesion una sola vez (AuthService dedup los
- *    refresh concurrentes) y reintenta la peticion original con el token nuevo.
- *    Si el refresh tambien falla, cierra la sesion local y propaga el error.
+ * 2. Ante un 401, pide a AuthService renovar la sesion (dedup de los refresh
+ *    concurrentes) y reintenta la peticion original con el token nuevo.
+ *
+ * El cierre de sesion NO lo decide el interceptor: lo decide AuthService dentro
+ * de `renovarSesion`, que solo cierra ante un rechazo real (401/403) y conserva
+ * la sesion ante fallos transitorios. El interceptor solo propaga el error.
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
@@ -53,13 +56,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (error.status !== 401 || !token) {
         return throwError(() => error);
       }
-      return auth.renovarSesion().pipe(
-        switchMap((nuevoToken) => next(conToken(req, nuevoToken))),
-        catchError((errorRefresh) => {
-          auth.cerrarSesionLocal();
-          return throwError(() => errorRefresh);
-        }),
-      );
+      return auth
+        .renovarSesion()
+        .pipe(switchMap((nuevoToken) => next(conToken(req, nuevoToken))));
     }),
   );
 };
